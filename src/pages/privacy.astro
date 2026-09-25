@@ -4,10 +4,10 @@ import PolicyPage from '../components/common/PolicyPage.astro';
 
 <PolicyPage
   title="Privacy Policy"
-  description="What FateTide stores and what it does not: no accounts or questions collected, a daily card kept only in your browser, what is in share links, hosting logs, and future analytics and advertising."
+  description="What FateTide stores and what it does not: no accounts or questions collected, a daily card kept only in your browser, what is in share links, hosting logs, Cloudflare Web Analytics, and advertising."
   path="/privacy/"
   heading="Privacy policy"
-  lead="FateTide is built to need as little personal information as possible. This page describes what the site does today, and what would change if analytics or advertising are added."
+  lead="FateTide is built to need as little personal information as possible. This page describes what the site does today, and what would change if advertising is added."
   updated
 >
   <section aria-labelledby="summary-title">
@@ -15,6 +15,7 @@ import PolicyPage from '../components/common/PolicyPage.astro';
     <ul>
       <li>There are no accounts, forms, or comment sections, and FateTide does not ask for your name, email, birth details, or questions.</li>
       <li>Your card of the day is kept in your own browser and is not sent to FateTide.</li>
+      <li>Page views are counted in aggregate with Cloudflare Web Analytics, without your readings or anything you typed.</li>
       <li>Advertising is not enabled at the moment. This policy will be updated when advertising is enabled.</li>
     </ul>
   </section>
@@ -46,7 +47,7 @@ import PolicyPage from '../components/common/PolicyPage.astro';
 
   <section aria-labelledby="analytics-title">
     <h2 id="analytics-title">Analytics</h2>
-    <p>FateTide does not currently run analytics scripts of its own. We may turn on Cloudflare Web Analytics, which Cloudflare describes as privacy-focused, measuring aggregate page views and performance without cookies to track individual visitors. If that happens, or if we add any other measurement, this page will be updated. Any measurement would not include your readings or anything you typed.</p>
+    <p>FateTide uses Cloudflare Web Analytics to see, in aggregate, which pages are visited and how quickly they load. Cloudflare describes it as privacy-focused and as measuring page views and performance without using cookies to track individual visitors. It receives basic technical information such as the page address and your browser type. FateTide does not send it your readings or anything you typed, and the site runs no other analytics. If that changes, this page will be updated.</p>
   </section>
 
   <section aria-labelledby="ads-title">

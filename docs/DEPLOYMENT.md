@@ -72,9 +72,9 @@ Add the domain under the Pages project's Custom domains, follow Cloudflare's DNS
 
 Add the site in Google Search Console (the domain or URL-prefix property for the live origin), submit `<origin>/sitemap.xml`, and check indexing after a few days. `/tarot/shared/` and the 404 are `noindex, follow` on purpose and are not in the sitemap.
 
-## 4. Cloudflare Web Analytics (not enabled in code)
+## 4. Cloudflare Web Analytics (enabled in the Cloudflare dashboard)
 
-The code contains no analytics beacon. After the site is live, open the Pages project's Metrics or Web Analytics section and enable Web Analytics (Cloudflare can add the beacon for Pages projects), or use Analytics & Logs > Web Analytics > Add a site. Then update the Analytics section of `src/pages/privacy.astro` and `POLICY_UPDATED` in `src/config/site.ts`. Google Analytics is not used.
+Web Analytics is on for the Pages project: Cloudflare adds its beacon (`data-cf-beacon`) to the served HTML at the edge, so it does not appear in the source code or in local builds. The privacy policy (`src/pages/privacy.astro`, "Analytics") describes it. If you turn it off or add other measurement, update that section and `POLICY_UPDATED` in `src/config/site.ts`. Browsers with tracker blockers may log `ERR_BLOCKED_BY_CLIENT` for the beacon; that is not a site error. Google Analytics is not used.
 
 If custom events are ever added, send only coarse names and never a question or typed text: `tarot_reading_completed`, `tarot_share_clicked`, `tarot_native_share_success`, `tarot_link_copied`, `shared_result_opened`, `shared_result_start_reading`, `horoscope_viewed`, `compatibility_checked`.
 
