@@ -9,10 +9,10 @@ const crumbs: Crumb[] = [
 ];
 ---
 
-<BaseLayout title="Free Tarot Readings" description="Choose a free tarot reading: one card, yes or no, three card, love, or a daily card. Each offers a prompt for reflection, not a fixed prediction." breadcrumbs={crumbs}>
+<BaseLayout noindex title="Free Tarot Readings" description="Choose a free tarot reading: one card, yes or no, three card, love, or a daily card. Each offers a prompt for reflection, not a fixed prediction." breadcrumbs={crumbs}>
   <Breadcrumbs items={crumbs} />
   <section class="section container" aria-labelledby="tarot-title">
-    <div class="section-heading"><div><p class="eyebrow">Tarot</p><h1 id="tarot-title">Choose a reading.</h1></div><p>Five ways to draw a card and reflect. Each reading is a prompt for reflection, not a prediction.</p></div>
+    <div class="section-heading"><div><p class="eyebrow">Tarot</p><h1 id="tarot-title">All tarot readings.</h1></div><p>Five ways to draw a card and reflect. Each reading is a prompt for reflection, not a prediction.</p></div>
     <div class="reading-grid">
       {tarotReadings.map((reading, index) => <article class="reading-card"><div class="reading-card-top"><span class="reading-symbol" aria-hidden="true">{reading.symbol}</span><span class="reading-number">{String(index + 1).padStart(2, '0')}</span></div><div><p class="reading-tag">{reading.tag}</p><h2>{reading.label}</h2><p>{reading.text}</p></div><a class="coming-soon" href={reading.href}>Start reading <span aria-hidden="true">↗</span></a></article>)}
     </div>

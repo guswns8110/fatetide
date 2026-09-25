@@ -1,59 +1,41 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { PROJECT_NAME } from '../config/site';
 
-const readings: { number: string; symbol: string; title: string; text: string; tag: string; href?: string }[] = [
-  { number: '01', symbol: '✦', title: 'One Card Tarot', text: 'A single card can open a new way to see the moment in front of you.', tag: 'A quiet beginning', href: '/tarot/one-card/' },
-  { number: '02', symbol: '♡', title: 'Love Tarot', text: 'Look at connection, vulnerability, and what your heart may need.', tag: 'For matters of the heart', href: '/tarot/love/' },
-  { number: '03', symbol: '◐', title: 'Yes or No', text: 'Explore the energy around a question without leaving nuance behind.', tag: 'A little clarity', href: '/tarot/yes-or-no/' },
-  { number: '04', symbol: '✧', title: 'Three Card Reading', text: 'Consider where you have been, where you are, and what may unfold.', tag: 'A wider perspective', href: '/tarot/three-card/' },
-  { number: '05', symbol: '☀', title: 'Daily Tarot', text: 'Begin the day with a prompt for attention and reflection.', tag: 'A daily ritual', href: '/tarot/daily/' },
-  { number: '06', symbol: '☾', title: 'Zodiac Horoscope', text: 'Explore the qualities of your sign and a fresh horoscope for every day.', tag: 'Written in the stars', href: '/horoscope/' },
+const steps = [
+  { number: '01', title: 'Choose', text: 'Pick Yes or No for a question on your mind, or Today for the day ahead.' },
+  { number: '02', title: 'Draw', text: 'Shuffle and choose the card that calls to you, or reveal the card for today.' },
+  { number: '03', title: 'Reflect', text: 'Read what the card suggests, and take whatever is useful from it.' },
 ];
 ---
 
-<BaseLayout isHome title="Tarot & Horoscope for Reflection" description="Explore modern tarot readings and zodiac insights in a calm space made for curiosity and personal reflection.">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-line"></span> A space for curiosity</p>
-        <h1 id="hero-title">A little wonder.<br /><em>A lot of perspective.</em></h1>
-        <p class="lead">Draw a card and discover a new perspective on love, work, and the path ahead. A thoughtful ritual for whatever is on your mind.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="#readings">Explore readings <span aria-hidden="true">↗</span></a>
-          <a class="button button-quiet" href="#daily">Today's inspiration <span aria-hidden="true">↓</span></a>
-        </div>
-        <p class="hero-note"><span aria-hidden="true">✧</span> Tarot for reflection, made for real life</p>
-      </div>
-      <div class="hero-art" aria-label="Decorative illustration of a celestial tarot card" role="img">
-        <div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div>
-        <span class="art-star star-one">✦</span><span class="art-star star-two">✧</span><span class="art-star star-three">✦</span>
-        <div class="tarot-card">
-          <div class="tarot-card-inner">
-            <div class="card-top"><span>THE</span><span>✦</span><span>STAR</span></div>
-            <div class="card-sky"><span class="card-moon"></span><span class="card-star s1">✦</span><span class="card-star s2">✧</span><span class="card-star s3">✦</span><span class="card-star s4">✧</span><span class="card-horizon"></span></div>
-            <div class="card-bottom">XVII · TRUST THE LIGHT WITHIN</div>
-          </div>
-        </div>
-        <span class="art-caption">Pause · Reflect · Begin</span>
-      </div>
-    </div>
+<BaseLayout isHome title="Yes or No Tarot and Today's Fortune" description="Ask the cards a yes or no question, or see today's tarot card and horoscope. A simple, calm place for reflection.">
+  <section class="home-hero container">
+    <p class="eyebrow">{PROJECT_NAME}</p>
+    <h1>A little guidance for today.</h1>
+    <p class="lead">Ask the cards a question, or see the card and the stars for your day. Simple, quiet, and made for reflection.</p>
   </section>
 
-  <div class="trust-strip" aria-label="Our approach"><div class="container trust-inner"><span>✧ Free to explore</span><span>✧ A moment for yourself</span><span>✧ No account needed</span></div></div>
-
-  <section id="readings" class="section container" aria-labelledby="readings-title">
-    <div class="section-heading"><div><p class="eyebrow">Find your starting point</p><h2 id="readings-title">Choose a path to explore</h2></div><p>Every reading offers a prompt to look inward. Pick what feels right for today.</p></div>
-    <div class="reading-grid">
-      {readings.map((reading) => <article class="reading-card"><div class="reading-card-top"><span class="reading-symbol" aria-hidden="true">{reading.symbol}</span><span class="reading-number">{reading.number}</span></div><div><p class="reading-tag">{reading.tag}</p><h3>{reading.title}</h3><p>{reading.text}</p></div>{reading.href ? <a class="coming-soon" href={reading.href}>Start reading <span aria-hidden="true">↗</span></a> : <span class="coming-soon">Coming soon <span aria-hidden="true">↗</span></span>}</article>)}
-    </div>
+  <section class="choice-grid container" aria-label="Choose a reading">
+    <a class="choice-card" href="/yes-or-no/">
+      <div><span class="choice-symbol" aria-hidden="true">◐</span><h2>Yes or No</h2><p>Ask a question.<br />Draw one card.</p></div>
+      <span class="button button-primary choice-cta">Ask the cards <span aria-hidden="true">↗</span></span>
+    </a>
+    <a class="choice-card" href="/today/">
+      <div><span class="choice-symbol" aria-hidden="true">☀</span><h2>Today's Fortune</h2><p>A card and a little guidance<br />for the day ahead.</p></div>
+      <span class="button button-primary choice-cta">See today <span aria-hidden="true">↗</span></span>
+    </a>
   </section>
 
-  <section id="daily" class="daily-section" aria-labelledby="daily-title"><div class="container daily-grid"><div class="daily-mark" aria-hidden="true"><span>☼</span><i></i></div><div class="daily-copy"><p class="eyebrow">A ritual for every day</p><h2 id="daily-title">Make room for a moment of meaning.</h2><p>Some days call for answers. Others simply ask us to slow down. Our daily reading offers a fresh card and a gentle thought to carry with you.</p><a class="button button-primary" href="/tarot/daily/">Draw today's card <span aria-hidden="true">↗</span></a></div></div></section>
+  <section class="home-steps container" aria-labelledby="how-title">
+    <h2 id="how-title">How {PROJECT_NAME} works</h2>
+    <ol class="steps">
+      {steps.map((step) => <li><span>{step.number}</span><h3>{step.title}</h3><p>{step.text}</p></li>)}
+    </ol>
+  </section>
 
-  <section class="section container zodiac-section" aria-labelledby="zodiac-title"><div class="zodiac-panel"><div><p class="eyebrow">The sky has a story</p><h2 id="zodiac-title">Get to know your sign.</h2><p>Explore the strengths, tendencies, and possibilities that make each zodiac sign distinct. A guide to understanding yourself and the people around you.</p><div class="hero-actions"><a class="button button-primary" href="/horoscope/">Read today's horoscope <span aria-hidden="true">↗</span></a><a class="button button-quiet" href="/compatibility/">Check compatibility</a></div></div><div class="zodiac-art" aria-hidden="true"><span class="zodiac-ring ring-one"></span><span class="zodiac-ring ring-two"></span><span class="zodiac-center">✷</span><span class="zodiac-glyph glyph-one">♈</span><span class="zodiac-glyph glyph-two">♎</span><span class="zodiac-glyph glyph-three">♓</span><span class="zodiac-glyph glyph-four">♌</span></div></div></section>
-
-  <section id="how-it-works" class="section how-section container" aria-labelledby="how-title"><div class="section-heading"><div><p class="eyebrow">Simple by design</p><h2 id="how-title">A reading in three moments</h2></div><p>There is no perfect way to begin. Bring a question, a feeling, or simply an open mind.</p></div><ol class="steps"><li><span>01</span><h3>Choose a focus</h3><p>Start with the part of life you want to look at more closely.</p></li><li><span>02</span><h3>Draw your card</h3><p>Take a breath, then select a card when you feel ready.</p></li><li><span>03</span><h3>Reflect your way</h3><p>Read the message as an invitation to think, not a fixed prediction.</p></li></ol></section>
-
-  <aside class="closing-note"><div class="container"><span aria-hidden="true">✦</span><p>“The cards do not decide your path. They invite you to see it differently.”</p><small>Readings are for entertainment and personal reflection only.</small></div></aside>
+  <section class="home-zodiac container">
+    <p>Curious about your sign?</p>
+    <a href="/horoscope/">Explore the Zodiac →</a>
+  </section>
 </BaseLayout>

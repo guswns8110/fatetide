@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/common/Breadcrumbs.astro';
+import NoScriptNote from '../components/common/NoScriptNote.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import type { Crumb } from '../config/site';
+import TodayFortune from '../components/tarot/TodayFortune';
+import RelatedReadings from '../components/tarot/RelatedReadings.astro';
+import { getArtworkIds } from '../utils/artwork';
+import '../styles/tarot.css';
+import '../styles/zodiac.css';
+
+const artworkIds = getArtworkIds();
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: "Today's Fortune", path: '/today/' },
+];
+---
+
+<BaseLayout title="Today's Fortune: Daily Tarot Card and Horoscope" description="See your tarot card for today with a short reading on love, work, money, and advice, then add your zodiac sign for today's horoscope. Your card stays the same all day." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <NoScriptNote feature="today's fortune" />
+  <section class="one-card-intro container"><p class="eyebrow">Today's fortune</p><h1>A card and a little guidance for today.</h1><p class="lead">Reveal your tarot card for the day, then, if you like, choose your zodiac sign for today's horoscope. Your card is saved only on this device and stays the same until tomorrow.</p><a href="/" class="back-home">← Back to home</a></section>
+  <TodayFortune artworkIds={artworkIds} client:load />
+  <RelatedReadings current="/today/" />
+  <AdSlot placement="today-below-reading" />
+</BaseLayout>

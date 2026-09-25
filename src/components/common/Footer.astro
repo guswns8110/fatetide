@@ -5,8 +5,8 @@ import { CONTACT_EMAIL, PROJECT_NAME, policyLinks } from '../../config/site';
 <footer class="site-footer">
   <div class="container footer-inner">
     <div><a class="footer-brand" href="/">✦ {PROJECT_NAME}</a><p>For entertainment and personal reflection.</p>{CONTACT_EMAIL && <p class="footer-contact"><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>}</div>
-    <nav aria-label="Explore"><ul><li><a href="/">Home</a></li><li><a href="/tarot/">Tarot</a></li><li><a href="/horoscope/">Horoscope</a></li><li><a href="/compatibility/">Compatibility</a></li></ul></nav>
-    <nav aria-label="About and policies"><ul>{policyLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}</ul></nav>
+    <nav aria-label="Explore"><ul><li><a href="/yes-or-no/">Yes or No</a></li><li><a href="/today/">Today's Fortune</a></li><li><a href="/horoscope/">Zodiac</a></li></ul></nav>
+    <nav aria-label="Information"><ul>{policyLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}</ul></nav>
     <p class="copyright">© {new Date().getFullYear()} {PROJECT_NAME}</p>
   </div>
 </footer>

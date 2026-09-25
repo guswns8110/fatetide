@@ -1,6 +1,6 @@
-# Oracle
+# FateTide
 
-Astro static site for tarot readings (One Card, Yes or No, Three Card, Love, Daily), daily horoscopes and guides for the 12 zodiac signs, and zodiac compatibility. No server, database, or paid API.
+Astro static site with two main pages, Yes or No (`/yes-or-no/`) and Today's Fortune (`/today/`), plus zodiac guides. One Card, Three Card, Love, and Compatibility still work at their old addresses but are not linked from the main navigation. No server, database, or paid API.
 
 ## Local development
 

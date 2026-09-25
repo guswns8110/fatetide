@@ -4,7 +4,10 @@ import { tarotReadings } from '../../config/site';
 interface Props { current: string }
 const { current } = Astro.props;
 const withSlash = (value: string) => `${value.replace(/\/+$/, '')}/`;
-const others = tarotReadings.filter((reading) => withSlash(reading.href) !== withSlash(current));
+// Core pages point at each other. The de-emphasized modes also link to everything, so their visitors are not stranded.
+const isCore = tarotReadings.some((reading) => reading.core && withSlash(reading.href) === withSlash(current));
+const pool = isCore ? tarotReadings.filter((reading) => reading.core) : tarotReadings;
+const others = pool.filter((reading) => withSlash(reading.href) !== withSlash(current));
 ---
 
 <nav class="related-readings container" aria-labelledby="related-title">

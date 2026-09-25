@@ -1,5 +1,5 @@
-export const PROJECT_NAME = 'Oracle';
-export const SITE_TAGLINE = 'Tarot, horoscope, and zodiac compatibility for reflection';
+export const PROJECT_NAME = 'FateTide';
+export const SITE_TAGLINE = 'Yes or No tarot and today\'s fortune, made for reflection';
 export const SITE_URL = import.meta.env.PUBLIC_SITE_URL || '';
 
 /**
@@ -28,27 +28,28 @@ export const CONTACT_EMAIL = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(email
 /** Shown on policy pages. Update it whenever a policy page changes materially. */
 export const POLICY_UPDATED = 'September 26, 2026';
 
+/**
+ * The two things visitors see: Yes or No, and Today's Fortune. Everything else (One Card, Three
+ * Card, Love, the Tarot hub) still works at its old address but is not linked from the main
+ * navigation or the homepage.
+ */
 export const tarotReadings = [
-  { label: 'One Card', href: '/tarot/one-card/', symbol: '✦', tag: 'A quiet beginning', text: 'A single card for a new perspective on the moment.' },
-  { label: 'Yes or No', href: '/tarot/yes-or-no/', symbol: '◐', tag: 'A little clarity', text: 'A graded answer with room for nuance.' },
-  { label: 'Three Card', href: '/tarot/three-card/', symbol: '✧', tag: 'A wider perspective', text: 'Past, present, and future in one wider view.' },
-  { label: 'Love', href: '/tarot/love/', symbol: '♡', tag: 'For matters of the heart', text: 'Two cards for your heart and the connection.' },
-  { label: 'Daily', href: '/tarot/daily/', symbol: '☀', tag: 'A daily ritual', text: 'One card a day, saved on your device.' },
+  { label: 'Yes or No', href: '/yes-or-no/', core: true, symbol: '◐', tag: 'A little clarity', text: 'Ask a question. Draw one card.' },
+  { label: "Today's Fortune", href: '/today/', core: true, symbol: '☀', tag: 'A daily ritual', text: 'A card and a little guidance for the day ahead.' },
+  { label: 'One Card', href: '/tarot/one-card/', core: false, symbol: '✦', tag: 'A quiet beginning', text: 'A single card for a new perspective on the moment.' },
+  { label: 'Three Card', href: '/tarot/three-card/', core: false, symbol: '✧', tag: 'A wider perspective', text: 'Past, present, and future in one wider view.' },
+  { label: 'Love', href: '/tarot/love/', core: false, symbol: '♡', tag: 'For matters of the heart', text: 'Two cards for your heart and the connection.' },
 ] as const;
 
 export interface NavItem {
   label: string;
   href: string;
-  /** Extra path prefixes that also mark this item as the current section. */
-  sections?: readonly string[];
-  children?: readonly { label: string; href: string }[];
 }
 
+/** Main navigation: just the two core pages. */
 export const primaryNavigation: readonly NavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Tarot', href: '/tarot/', children: tarotReadings.map(({ label, href }) => ({ label, href })) },
-  { label: 'Horoscope', href: '/horoscope/', sections: ['/zodiac'] },
-  { label: 'Compatibility', href: '/compatibility/' },
+  { label: 'Yes or No', href: '/yes-or-no/' },
+  { label: 'Today', href: '/today/' },
 ];
 
 export interface Crumb {

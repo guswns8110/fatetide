@@ -23,7 +23,7 @@ const crumbs: Crumb[] = [
 
 <BaseLayout title={title} description={description} breadcrumbs={crumbs}>
   <Breadcrumbs items={crumbs} />
-  <section class="one-card-intro container"><p class="eyebrow">{updated ? `Last updated ${POLICY_UPDATED}` : 'Oracle'}</p><h1>{heading}</h1><p class="lead">{lead}</p></section>
+  <section class="one-card-intro container"><p class="eyebrow">{updated ? `Last updated ${POLICY_UPDATED}` : 'FateTide'}</p><h1>{heading}</h1><p class="lead">{lead}</p></section>
   <article class="zodiac-article prose">
     <slot />
     {CONTACT_EMAIL && <section aria-labelledby="contact-title"><h2 id="contact-title">Contact</h2><p>Questions about this page or the site can be sent to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p></section>}

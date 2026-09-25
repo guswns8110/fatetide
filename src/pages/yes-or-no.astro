@@ -1,19 +1,18 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
-import NoScriptNote from '../../components/common/NoScriptNote.astro';
-import AdSlot from '../../components/ads/AdSlot.astro';
-import type { Crumb } from '../../config/site';
-import YesNoReading from '../../components/tarot/YesNoReading';
-import RelatedReadings from '../../components/tarot/RelatedReadings.astro';
-import { getArtworkIds } from '../../utils/artwork';
-import '../../styles/tarot.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/common/Breadcrumbs.astro';
+import NoScriptNote from '../components/common/NoScriptNote.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import type { Crumb } from '../config/site';
+import YesNoReading from '../components/tarot/YesNoReading';
+import RelatedReadings from '../components/tarot/RelatedReadings.astro';
+import { getArtworkIds } from '../utils/artwork';
+import '../styles/tarot.css';
 
 const artworkIds = getArtworkIds();
 const crumbs: Crumb[] = [
   { name: 'Home', path: '/' },
-  { name: 'Tarot', path: '/tarot/' },
-  { name: 'Yes or No', path: '/tarot/yes-or-no/' },
+  { name: 'Yes or No', path: '/yes-or-no/' },
 ];
 ---
 
@@ -22,6 +21,6 @@ const crumbs: Crumb[] = [
   <NoScriptNote feature="tarot readings" />
   <section class="one-card-intro container"><p class="eyebrow">A little clarity</p><h1>Yes, no, or not yet.</h1><p class="lead">Hold a question in mind and draw a card. Your answer comes in degrees, with a reflection on why, because most questions are more nuanced than yes or no.</p><a href="/" class="back-home">← Back to home</a></section>
   <YesNoReading artworkIds={artworkIds} client:load />
-  <RelatedReadings current="/tarot/yes-or-no/" />
-  <AdSlot placement="tarot-yes-or-no-below-reading" />
+  <RelatedReadings current="/yes-or-no/" />
+  <AdSlot placement="yes-or-no-below-reading" />
 </BaseLayout>

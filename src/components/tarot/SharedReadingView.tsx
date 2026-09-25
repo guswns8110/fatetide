@@ -14,10 +14,10 @@ type State = { status: 'loading' } | { status: 'valid'; reading: SharedReading }
 
 const ownReading: Record<ReadingType, { label: string; href: string }> = {
   'one-card': { label: 'Draw Your Own Card', href: '/tarot/one-card/' },
-  'yes-or-no': { label: 'Ask Your Own Question', href: '/tarot/yes-or-no/' },
+  'yes-or-no': { label: 'Ask Your Own Question', href: '/yes-or-no/' },
   'three-card': { label: 'Draw Your Three Cards', href: '/tarot/three-card/' },
   love: { label: 'Try Your Own Love Reading', href: '/tarot/love/' },
-  daily: { label: "Get Today's Card", href: '/tarot/daily/' },
+  daily: { label: "See Today's Fortune", href: '/today/' },
 };
 
 function Actions({ label, href }: { label: string; href: string }) {

@@ -1,15 +1,16 @@
-import { policyLinks, tarotReadings } from './site';
+import { policyLinks } from './site';
 import { zodiacSigns } from '../data/zodiac/signs';
 
 /**
  * Public, indexable pages, with a trailing slash to match the static build output.
- * Deliberately excluded: /tarot/shared/ (private share links, noindex) and /404.
+ * Deliberately excluded: /tarot/shared/ (private share links), /404, and the de-emphasized
+ * Tarot modes (/tarot/, One Card, Three Card, Love), which are noindex.
  * scripts/validate-seo.mjs checks this list against the pages that are actually built.
  */
 export const indexablePaths: readonly string[] = [
   '/',
-  '/tarot/',
-  ...tarotReadings.map(({ href }) => href),
+  '/yes-or-no/',
+  '/today/',
   '/horoscope/',
   '/compatibility/',
   ...zodiacSigns.map(({ id }) => `/zodiac/${id}/`),

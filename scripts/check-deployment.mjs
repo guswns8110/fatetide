@@ -46,7 +46,7 @@ const canonicalOf = (html) => html.match(/<link rel="canonical" href="([^"]*)"/)
 
 const SHARED = '/tarot/shared/?v=1&t=one-card&c=career&cards=the-lovers.u';
 const COMPAT = '/compatibility/?a=aries&b=scorpio';
-const pages = ['/', '/tarot/', '/tarot/one-card/', '/tarot/yes-or-no/', '/tarot/three-card/', '/tarot/love/', '/tarot/daily/', '/horoscope/', '/compatibility/', '/zodiac/aries/', '/zodiac/pisces/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'];
+const pages = ['/', '/yes-or-no/', '/today/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/horoscope/', '/compatibility/', '/zodiac/aries/', '/zodiac/pisces/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'];
 
 for (const path of [...pages, SHARED, COMPAT]) {
   await check(`200 ${path}`, async () => {
@@ -78,7 +78,7 @@ for (const path of ['/tarot/shared?v=1&t=one-card&c=career&cards=the-lovers.u', 
 }
 
 // SEO tags use the real origin.
-for (const path of ['/', '/tarot/love/', '/zodiac/scorpio/', '/privacy/', '/compatibility/']) {
+for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/scorpio/', '/privacy/', '/compatibility/']) {
   await check(`seo ${path}`, async () => {
     const { text } = await fetchChain(path);
     const expected = `${origin}${path}`;
@@ -92,6 +92,29 @@ for (const path of ['/', '/tarot/love/', '/zodiac/scorpio/', '/privacy/', '/comp
     assert.equal(meta(text, 'robots'), undefined, 'must be indexable');
   });
 }
+// Old addresses redirect permanently to the new pages.
+for (const [from, to] of [['/tarot/yes-or-no/', '/yes-or-no/'], ['/tarot/daily/', '/today/'], ['/tarot/yes-or-no', '/yes-or-no/'], ['/tarot/daily', '/today/']]) {
+  await check(`301 ${from} -> ${to}`, async () => {
+    const { response, finalUrl, chain } = await fetchChain(from);
+    assert.ok(chain[0]?.startsWith('301 '), `first hop should be 301, got: ${chain[0] ?? 'no redirect'}`);
+    assert.equal(response.status, 200);
+    assert.equal(finalUrl.pathname, to, `ended at ${finalUrl.pathname}`);
+    return chain.join(' | ');
+  });
+}
+// De-emphasized modes still work but are not indexed.
+for (const path of ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']) {
+  await check(`noindex ${path}`, async () => {
+    const { text } = await fetchChain(path);
+    assert.equal(meta(text, 'robots'), 'noindex, follow');
+    assert.equal(canonicalOf(text), undefined);
+  });
+}
+await check('main navigation has two links', async () => {
+  const { text } = await fetchChain('/');
+  const nav = text.match(/<nav class="site-nav"[\s\S]*?<\/nav>/)?.[0] ?? '';
+  assert.deepEqual([...nav.matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]), ['/yes-or-no/', '/today/']);
+});
 await check('shared page is noindex, follow with no canonical', async () => {
   const { text } = await fetchChain(SHARED);
   assert.equal(meta(text, 'robots'), 'noindex, follow');
@@ -114,7 +137,8 @@ await check('sitemap.xml', async () => {
   const { response, text } = await fetchChain('/sitemap.xml');
   assert.equal(response.status, 200);
   const locs = [...text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.ok(locs.length >= 26, `${locs.length} URLs`);
+  assert.ok(locs.length >= 22, `${locs.length} URLs`);
+  for (const hidden of ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']) assert.ok(!locs.includes(`${origin}${hidden}`), `${hidden} must not be in the sitemap`);
   assert.ok(locs.every((loc) => loc.startsWith(`${origin}/`) && loc.endsWith('/')), 'absolute, origin-matched, trailing slash');
   assert.ok(!locs.some((loc) => loc.includes('shared') || loc.includes('404')), 'no shared or 404 pages');
   return `${locs.length} URLs`;

@@ -1,6 +1,6 @@
 # Deployment and AdSense preparation
 
-Oracle is a static Astro site. There is no server, database, or worker. This file lists what has to be done outside the code.
+FateTide is a static Astro site. There is no server, database, or worker. This file lists what has to be done outside the code.
 
 ## 1. Deploy to Cloudflare Pages (Git)
 
@@ -59,6 +59,10 @@ The site builds and runs with all four empty or unset.
 ### Trailing slashes and redirects
 
 Pages are built as `folder/index.html`, and canonical URLs and all internal links use the trailing-slash form (`/tarot/`). Links you type or share without the slash (`/tarot`) are handled by Cloudflare, either by serving the page or by a single redirect; `check:deploy` records which. Share links are always generated as `/tarot/shared/?v=1&...`.
+
+### Site structure and legacy routes
+
+The two main pages are `/yes-or-no/` and `/today/`. `public/_redirects` sends the old addresses there with a 301: `/tarot/yes-or-no/` to `/yes-or-no/` and `/tarot/daily/` to `/today/` (with and without the trailing slash). One Card, Three Card, Love, and the Tarot hub still work but are `noindex, follow`, out of the sitemap, and not linked from the header, footer, or homepage. Compatibility and the Horoscope page stay indexable and are linked from the zodiac guides. To bring a de-emphasized page back into search results, remove `noindex` from its page and add its path to `src/config/sitemap.ts`. Existing share links keep working because `/tarot/shared/` and the `t=` reading types did not change.
 
 ## 2. Custom domain
 

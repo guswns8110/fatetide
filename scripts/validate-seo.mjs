@@ -51,9 +51,12 @@ function jpegSize(buffer) {
   return null;
 }
 
-const NOINDEX = new Set(['/404', '/tarot/shared/']);
+// noindex: private share links, the 404, and the de-emphasized Tarot modes (still reachable, not promoted).
+const NOINDEX = new Set(['/404', '/tarot/shared/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']);
+const HIDDEN_LINKS = ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/compatibility/'];
+const LEGACY_ROUTES = { '/tarot/yes-or-no/': '/yes-or-no/', '/tarot/daily/': '/today/' };
 const EXPECTED = [
-  '/', '/tarot/', '/tarot/one-card/', '/tarot/yes-or-no/', '/tarot/three-card/', '/tarot/love/', '/tarot/daily/', '/tarot/shared/',
+  '/', '/yes-or-no/', '/today/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/tarot/shared/',
   '/horoscope/', '/compatibility/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/', '/404',
   ...['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'].map((id) => `/zodiac/${id}/`),
 ];
@@ -88,7 +91,7 @@ try {
     // aria-current="page" marks only the exact page, never a whole section (e.g. a zodiac guide is not "Horoscope").
     const mainNav = html.match(/<nav class="site-nav"[\s\S]*?<\/nav>/)?.[0] ?? '';
     const currentLinks = [...mainNav.matchAll(/<a href="([^"]+)"[^>]*aria-current="page"/g)].map((m) => m[1]);
-    assert.deepEqual(currentLinks, mainNav.includes('href="/"') && route === '/' ? ['/'] : currentLinks.filter((href) => href === route), `${label} aria-current links: ${currentLinks}`);
+    assert.deepEqual(currentLinks, currentLinks.filter((href) => href === route), `${label} aria-current links: ${currentLinks}`);
 
     // Social metadata is complete on every page.
     assert.equal(meta(html, 'og:title', 'property'), title, label);
@@ -126,7 +129,7 @@ try {
       const navMatch = html.match(/<nav class="breadcrumbs[^"]*" aria-label="Breadcrumb">([\s\S]*?)<\/nav>/);
       if (BREADCRUMB_PAGES.includes(route)) {
         assert.ok(crumbs && navMatch, `${label} needs visible and structured breadcrumbs`);
-        const visible = [...navMatch[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').trim());
+        const visible = [...navMatch[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => decode(m[1].replace(/<[^>]+>/g, '').trim()));
         assert.deepEqual(crumbs.itemListElement.map((item) => item.name), visible, `${label} breadcrumb names match the visible trail`);
         assert.deepEqual(crumbs.itemListElement.map((item) => item.position), visible.map((_, index) => index + 1));
         assert.equal(crumbs.itemListElement.at(-1).item, canonical, `${label} last breadcrumb is the page`);
@@ -163,6 +166,33 @@ try {
       if (!lastSegment.includes('.')) assert.ok(path.endsWith('/'), `${route}: internal link ${href} should use the canonical trailing-slash form`);
     }
   }
+
+  // Simplified structure: two main links, no menu, and no promotion of the de-emphasized features.
+  for (const [route, html] of site) {
+    const nav = html.match(/<nav class="site-nav"[\s\S]*?<\/nav>/)?.[0] ?? '';
+    assert.deepEqual([...nav.matchAll(/<a href="([^"]+)"/g)].map((m) => m[1]), ['/yes-or-no/', '/today/'], `${route}: main navigation`);
+    assert.ok(!/nav-toggle|nav-sub|has-children/.test(html), `${route}: no menu or dropdown markup`);
+    const footer = html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
+    const footerLinks = [...footer.matchAll(/<a [^>]*?href="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(footerLinks, ['/', '/yes-or-no/', '/today/', '/horoscope/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'], `${route}: footer links`);
+    assert.ok(!html.includes('href="/tarot/yes-or-no') && !html.includes('href="/tarot/daily'), `${route}: links to a redirected legacy route`);
+  }
+  const home = site.get('/');
+  const homeLinks = [...home.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+  for (const hidden of HIDDEN_LINKS) assert.ok(!homeLinks.includes(hidden), `homepage must not link to ${hidden}`);
+  assert.equal((home.match(/class="choice-card"/g) ?? []).length, 2, 'homepage offers exactly two choices');
+  assert.ok(home.includes('href="/yes-or-no/"') && home.includes('href="/today/"') && home.includes('href="/horoscope/"'));
+
+  // Old addresses are permanent redirects (public/_redirects), and no page is built at them.
+  const redirects = readFileSync(join(main, '_redirects'), 'utf8').split(/\r?\n/).filter(Boolean).map((line) => line.trim().split(/\s+/));
+  for (const [from, to] of Object.entries(LEGACY_ROUTES)) {
+    for (const source of [from, from.replace(/\/$/, '')]) {
+      assert.ok(redirects.some(([a, b, code]) => a === source && b === to && code === '301'), `_redirects needs a 301 from ${source} to ${to}`);
+    }
+    assert.ok(!site.has(from), `${from} must not be built as a page`);
+    assert.ok(site.has(to), `${to} must exist`);
+  }
+  assert.ok(existsSync(join(main, '_headers')));
 
   // Sitemap, robots, social image.
   const sitemap = readFileSync(join(main, 'sitemap.xml'), 'utf8');

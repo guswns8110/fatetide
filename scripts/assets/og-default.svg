@@ -31,8 +31,8 @@
     <path d="M1090 190 l5 12 l12 5 l-12 5 l-5 12 l-5 -12 l-12 -5 l12 -5z"/>
     <path d="M700 480 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4z"/>
   </g>
-  <text x="90" y="200" fill="#dcbf8c" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="7">TAROT · HOROSCOPE · COMPATIBILITY</text>
-  <text x="84" y="350" fill="#f4f0e9" font-family="Georgia, 'Times New Roman', serif" font-size="150" letter-spacing="-4">Oracle</text>
-  <text x="90" y="420" fill="#c9c5d1" font-family="Georgia, 'Times New Roman', serif" font-size="34">Cards, stars, and the space between us.</text>
+  <text x="90" y="200" fill="#dcbf8c" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="7">YES OR NO · TODAY'S FORTUNE</text>
+  <text x="84" y="350" fill="#f4f0e9" font-family="Georgia, 'Times New Roman', serif" font-size="136" letter-spacing="-3">FateTide</text>
+  <text x="90" y="420" fill="#c9c5d1" font-family="Georgia, 'Times New Roman', serif" font-size="34">A little guidance for today.</text>
   <text x="90" y="545" fill="#a79fad" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="2">For entertainment and personal reflection</text>
 </svg>
