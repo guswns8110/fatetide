@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/common/Breadcrumbs.astro';
+import NoScriptNote from '../components/common/NoScriptNote.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import type { Crumb } from '../config/site';
+import CompatibilityChecker from '../components/horoscope/CompatibilityChecker';
+import '../styles/tarot.css';
+import '../styles/zodiac.css';
+
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Compatibility', path: '/compatibility/' },
+];
+---
+
+<BaseLayout title="Zodiac Compatibility Calculator" description="Choose two zodiac signs to explore how their styles fit together: overall dynamic, communication, love, emotional connection, challenges, and advice." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <NoScriptNote feature="the compatibility checker" />
+  <section class="one-card-intro container"><p class="eyebrow">Zodiac compatibility</p><h1>How do two signs fit together?</h1><p class="lead">Choose two Sun signs to explore their overall dynamic, communication, love, emotional connection, challenges, and advice. It is a conversation starter, not a verdict.</p><a href="/" class="back-home">← Back to home</a></section>
+  <CompatibilityChecker client:load />
+  <section class="zodiac-article zodiac-index" aria-labelledby="how-title">
+    <h2 id="how-title">How this works</h2>
+    <p>Each pairing is built from the two signs' elements (fire, earth, air, water), modalities (cardinal, fixed, mutable), and their own tendencies in communication, love, and stress. The result is the same whichever sign you choose first, and it describes a tone such as harmonious, dynamic, mixed, or challenging rather than a score.</p>
+    <p class="zodiac-disclaimer">Explore each sign on its own in the <a href="/horoscope/">zodiac guides</a>. For entertainment and personal reflection.</p>
+  </section>
+  <AdSlot placement="compatibility-page-end" />
+</BaseLayout>

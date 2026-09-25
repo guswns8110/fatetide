@@ -1,0 +1,14 @@
+---
+interface Props {
+  /** What is unavailable without JavaScript, e.g. "Tarot readings". */
+  feature: string;
+}
+const { feature } = Astro.props;
+---
+
+<noscript>
+  <style is:inline>main .one-card-app { display: none; }</style>
+  <div class="container noscript-note">
+    <p><strong>JavaScript is needed for {feature}.</strong> The rest of this site can still be read without it: browse the <a href="/horoscope/">zodiac guides</a>, learn <a href="/how-it-works/">how it works</a>, or return to the <a href="/">home page</a>.</p>
+  </div>
+</noscript>

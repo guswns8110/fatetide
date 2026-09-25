@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
+import NoScriptNote from '../../components/common/NoScriptNote.astro';
+import AdSlot from '../../components/ads/AdSlot.astro';
+import type { Crumb } from '../../config/site';
+import LoveReading from '../../components/tarot/LoveReading';
+import RelatedReadings from '../../components/tarot/RelatedReadings.astro';
+import { getArtworkIds } from '../../utils/artwork';
+import '../../styles/tarot.css';
+
+const artworkIds = getArtworkIds();
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Tarot', path: '/tarot/' },
+  { name: 'Love', path: '/tarot/love/' },
+];
+---
+
+<BaseLayout title="Love Tarot Reading" description="Draw two tarot cards, one for your heart and one for the connection, for a gentle reflection on love and relationships." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <NoScriptNote feature="tarot readings" />
+  <section class="one-card-intro container"><p class="eyebrow">For matters of the heart</p><h1>Your heart, and the space between.</h1><p class="lead">Two cards look at what you are feeling and what is shaping the way you connect. Whether you are single, partnered, or unsure, take it as a prompt to listen inward.</p><a href="/" class="back-home">← Back to home</a></section>
+  <LoveReading artworkIds={artworkIds} client:load />
+  <RelatedReadings current="/tarot/love/" />
+  <AdSlot placement="tarot-love-below-reading" />
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { CONTACT_EMAIL, POLICY_UPDATED, type Crumb } from '../../config/site';
+import '../../styles/zodiac.css';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  heading: string;
+  lead: string;
+  /** Show the "last updated" line (policy documents). */
+  updated?: boolean;
+}
+
+const { title, description, path, heading, lead, updated = false } = Astro.props;
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: heading, path },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <section class="one-card-intro container"><p class="eyebrow">{updated ? `Last updated ${POLICY_UPDATED}` : 'Oracle'}</p><h1>{heading}</h1><p class="lead">{lead}</p></section>
+  <article class="zodiac-article prose">
+    <slot />
+    {CONTACT_EMAIL && <section aria-labelledby="contact-title"><h2 id="contact-title">Contact</h2><p>Questions about this page or the site can be sent to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p></section>}
+  </article>
+</BaseLayout>

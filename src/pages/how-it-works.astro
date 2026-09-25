@@ -1,0 +1,59 @@
+---
+import PolicyPage from '../components/common/PolicyPage.astro';
+---
+
+<PolicyPage
+  title="How Oracle Works"
+  description="A plain-language look at how Oracle draws tarot cards, decides upright and reversed, rotates the daily horoscope, builds compatibility results, and creates share links."
+  path="/how-it-works/"
+  heading="How Oracle works"
+  lead="What happens behind each reading, explained without mystery. Readings are prompts for reflection, and this page is here so you can see how they are put together."
+>
+  <section aria-labelledby="draw-title">
+    <h2 id="draw-title">Drawing tarot cards</h2>
+    <p>The deck has 78 cards: 22 major arcana and 56 minor arcana in four suits. When you shuffle, your browser's random number generator mixes the deck, and the same page never sends your draw to a server.</p>
+    <p>In One Card and Yes or No, three face-down cards are laid out and you choose the one that calls to you; that card is turned over when you choose it. Three Card and Love deal their cards without repeats and reveal them together, each in its own position: past, present, and future, or your heart and the connection.</p>
+  </section>
+
+  <section aria-labelledby="reversed-title">
+    <h2 id="reversed-title">Upright and reversed</h2>
+    <p>About one draw in three (35 percent) comes up reversed. In this site a reversed card is read as a softer, blocked, or more inward version of the card's theme, and never as bad luck. Each card has its own written meaning for both directions.</p>
+  </section>
+
+  <section aria-labelledby="readings-title">
+    <h2 id="readings-title">What each reading shows</h2>
+    <ul>
+      <li><strong>One Card</strong> pairs your card with a focus you choose: general, love, career, or money.</li>
+      <li><strong>Yes or No</strong> gives a graded answer, from yes to no with unclear in the middle. The answer follows from the card's meaning, and it comes with a reflection. It is not a prediction.</li>
+      <li><strong>Three Card</strong> reads a card each for the past, the present, and the future.</li>
+      <li><strong>Love</strong> reads two cards: one for your heart and one for the connection.</li>
+      <li><strong>Daily</strong> draws one card for the day.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="daily-title">
+    <h2 id="daily-title">Your daily tarot card</h2>
+    <p>Your card of the day is saved in your browser's local storage until your local date changes, so reloading the page shows the same card. Clearing site data, or using another browser or device, starts a new draw.</p>
+  </section>
+
+  <section aria-labelledby="horoscope-title">
+    <h2 id="horoscope-title">The daily horoscope</h2>
+    <p>Each sign has a written set of short reflections for general, love, career, money, and advice. The site picks one from each set using a fixed rule that depends only on today's date and the sign. That means everyone with the same sign sees the same horoscope on the same date, it stays the same when you reload, and it changes at midnight in your local time.</p>
+    <p>It is not calculated from planetary positions or a birth chart, and it is not personal beyond your Sun sign.</p>
+  </section>
+
+  <section aria-labelledby="compat-title">
+    <h2 id="compat-title">Compatibility</h2>
+    <p>A compatibility result combines each sign's element (fire, earth, air, or water), its modality (cardinal, fixed, or mutable), and its own tendencies in communication, love, and stress. Nothing is random, and Aries with Scorpio reads the same as Scorpio with Aries. The result is described as harmonious, dynamic, mixed, or challenging, and never as a score, because how two people get along depends on far more than their Sun signs.</p>
+  </section>
+
+  <section aria-labelledby="share-title">
+    <h2 id="share-title">Sharing a reading</h2>
+    <p>Share My Reading makes a link that contains only the reading type, the card identifiers, whether each card is upright or reversed, the focus for One Card and Three Card, and the date for a daily card. It never contains a question or anything you typed. When someone opens the link, their browser rebuilds the reading from the same card data. Shared links are not listed in search engines.</p>
+  </section>
+
+  <section aria-labelledby="limits-title">
+    <h2 id="limits-title">What this does not claim</h2>
+    <p>Neither the shuffle nor the written rules have been tested for predictive accuracy, and none is claimed. Think of a reading as a structured prompt: a way to slow down, notice what a card or a sign stirs up in you, and decide for yourself what to do with it.</p>
+  </section>
+</PolicyPage>

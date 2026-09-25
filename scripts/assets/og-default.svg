@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Source for public/og-default.png. Edit the site name below if PROJECT_NAME changes, then re-render with scripts/render-og.mjs. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0c0d1b"/>
+      <stop offset="0.6" stop-color="#19162e"/>
+      <stop offset="1" stop-color="#2a1f45"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.76" cy="0.5" r="0.55">
+      <stop offset="0" stop-color="#b68e54" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#b68e54" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9d3a4"/>
+      <stop offset="1" stop-color="#b98f58"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="24" y="24" width="1152" height="582" fill="none" stroke="#dcbf8c" stroke-opacity="0.35" stroke-width="2"/>
+  <g fill="none" stroke="#dcbf8c">
+    <circle cx="910" cy="315" r="250" stroke-opacity="0.35" stroke-width="2"/>
+    <circle cx="910" cy="315" r="190" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="4 10"/>
+    <circle cx="910" cy="315" r="130" stroke-opacity="0.4" stroke-width="2"/>
+  </g>
+  <circle cx="910" cy="315" r="86" fill="url(#gold)"/>
+  <circle cx="944" cy="296" r="80" fill="#231b3c"/>
+  <g fill="#f0dfb0">
+    <path d="M812 92 l7 18 l18 7 l-18 7 l-7 18 l-7 -18 l-18 -7 l18 -7z"/>
+    <path d="M1058 470 l6 15 l15 6 l-15 6 l-6 15 l-6 -15 l-15 -6 l15 -6z"/>
+    <path d="M1090 190 l5 12 l12 5 l-12 5 l-5 12 l-5 -12 l-12 -5 l12 -5z"/>
+    <path d="M700 480 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4z"/>
+  </g>
+  <text x="90" y="200" fill="#dcbf8c" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="7">TAROT · HOROSCOPE · COMPATIBILITY</text>
+  <text x="84" y="350" fill="#f4f0e9" font-family="Georgia, 'Times New Roman', serif" font-size="150" letter-spacing="-4">Oracle</text>
+  <text x="90" y="420" fill="#c9c5d1" font-family="Georgia, 'Times New Roman', serif" font-size="34">Cards, stars, and the space between us.</text>
+  <text x="90" y="545" fill="#a79fad" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="2">For entertainment and personal reflection</text>
+</svg>

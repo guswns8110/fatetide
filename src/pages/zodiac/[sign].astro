@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
+import AdSlot from '../../components/ads/AdSlot.astro';
+import TodayHoroscope from '../../components/horoscope/TodayHoroscope';
+import { zodiacDepth } from '../../data/zodiac/depth';
+import { zodiacSigns } from '../../data/zodiac/signs';
+import type { ZodiacSign } from '../../data/zodiac/types';
+import type { Crumb } from '../../config/site';
+import { getCompatibility, type Tone } from '../../utils/compatibility';
+import { capitalize } from '../../utils/horoscope';
+import '../../styles/tarot.css';
+import '../../styles/zodiac.css';
+
+export function getStaticPaths() {
+  return zodiacSigns.map((sign) => ({ params: { sign: sign.id }, props: { sign } }));
+}
+
+const { sign } = Astro.props as { sign: ZodiacSign };
+const depth = zodiacDepth[sign.id];
+const article = /^[aeiou]/.test(sign.element) ? 'an' : 'a';
+const title = `${sign.name} Zodiac Guide: Love, Career & Personality`;
+const description = `${sign.name} (${sign.dateRange}) is ${article} ${sign.element} sign ruled by ${sign.rulingPlanet}. Explore ${sign.name}'s personality, strengths, challenges, love, career and money tendencies, plus today's horoscope.`;
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Horoscope', path: '/horoscope/' },
+  { name: sign.name, path: `/zodiac/${sign.id}/` },
+];
+
+const toneGroups: { tone: Tone; heading: string }[] = [
+  { tone: 'harmonious', heading: 'Often flows easily with' },
+  { tone: 'dynamic', heading: 'Lively, high-contrast pairings with' },
+  { tone: 'mixed', heading: 'A mix of ease and difference with' },
+  { tone: 'challenging', heading: 'Asks for extra patience with' },
+];
+const matches = zodiacSigns.map((other) => ({ other, result: getCompatibility(sign.id, other.id) }));
+const groups = toneGroups
+  .map(({ tone, heading }) => ({ heading, signs: matches.filter(({ result }) => result?.tone === tone).map(({ other }) => other) }))
+  .filter((group) => group.signs.length > 0);
+const otherSigns = zodiacSigns.filter((other) => other.id !== sign.id);
+const facts: [string, string][] = [
+  ['Dates', sign.dateRange],
+  ['Element', capitalize(sign.element)],
+  ['Modality', capitalize(sign.modality)],
+  ['Ruling planet', sign.rulingPlanet],
+  ['Tarot card', sign.relatedTarotCard],
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <section class="one-card-intro container"><p class="eyebrow">Zodiac guide</p><h1><span class="sign-title-symbol" aria-hidden="true">{sign.symbol}</span> {sign.name}</h1><p class="lead">{sign.descriptor}.</p><a href="/horoscope/" class="back-home">← All signs</a></section>
+
+  <article class="zodiac-article">
+    <dl class="zodiac-facts">
+      {facts.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}
+    </dl>
+
+    <section aria-labelledby="today-title">
+      <h2 id="today-title">Today's {sign.name} horoscope</h2>
+      <noscript><p class="zodiac-note">Today's horoscope needs JavaScript. Everything else on this page can be read without it.</p><style is:inline>.zodiac-today { display: none; }</style></noscript>
+      <div class="one-card-app zodiac-today"><div class="reading-panel"><TodayHoroscope id={sign.id} name={sign.name} dailyPool={sign.dailyPool} client:load /></div></div>
+      <p class="zodiac-note">Today's horoscope is a prompt for reflection and changes at local midnight. <a href={`/horoscope/#${sign.id}`}>See it on the horoscope page</a>.</p>
+    </section>
+
+    <section aria-labelledby="overview-title">
+      <h2 id="overview-title">{sign.name} personality</h2>
+      <p>{sign.overview}</p>
+      <p>As {article} {sign.element} sign with a {sign.modality} quality, {sign.name} is ruled by {sign.rulingPlanet}. In tarot, the sign is often linked with {sign.relatedTarotCard}.</p>
+    </section>
+
+    <section class="zodiac-columns" aria-label="Strengths and challenges">
+      <div><h2>Strengths</h2><ul>{sign.strengths.map((item) => <li>{item}</li>)}</ul></div>
+      <div><h2>Challenges</h2><ul>{sign.challenges.map((item) => <li>{item}</li>)}</ul></div>
+    </section>
+
+    <section aria-labelledby="love-title"><h2 id="love-title">{sign.name} in love</h2><p>{sign.love}</p></section>
+    <section aria-labelledby="relationships-title"><h2 id="relationships-title">Relationships and communication</h2><p>{depth.relationships}</p></section>
+
+    <AdSlot placement="zodiac-after-relationships" />
+
+    <section aria-labelledby="career-title"><h2 id="career-title">{sign.name} at work</h2><p>{sign.career}</p></section>
+    <section aria-labelledby="work-style-title"><h2 id="work-style-title">Work style and motivation</h2><p>{depth.workStyle}</p></section>
+    <section aria-labelledby="money-title"><h2 id="money-title">{sign.name} and money</h2><p>{sign.money}</p></section>
+
+    <section aria-labelledby="prompts-title">
+      <h2 id="prompts-title">Reflection prompts for {sign.name}</h2>
+      <p>These questions are not predictions. They are prompts to sit with, in a journal or a quiet moment.</p>
+      <ul>{depth.growthPrompts.map((prompt) => <li>{prompt}</li>)}</ul>
+    </section>
+
+    <section aria-labelledby="compat-title">
+      <h2 id="compat-title">{sign.name} compatibility at a glance</h2>
+      <p>These are general tendencies based on element and modality. Open any pairing for the full picture.</p>
+      {groups.map((group) => <div class="compat-group"><h3>{group.heading}</h3><ul class="chip-list">{group.signs.map((other) => <li><a href={`/compatibility/?a=${sign.id}&b=${other.id}`}>{other.name}</a></li>)}</ul></div>)}
+    </section>
+
+    <AdSlot placement="zodiac-after-compatibility" />
+
+    <nav class="zodiac-others" aria-labelledby="others-title">
+      <h2 id="others-title">Explore other signs</h2>
+      <ul class="chip-list">{otherSigns.map((other) => <li><a href={`/zodiac/${other.id}/`}>{other.symbol} {other.name}</a></li>)}</ul>
+    </nav>
+
+    <p class="zodiac-disclaimer">For entertainment and personal reflection. Sun sign descriptions are broad tendencies, not rules, and dates shift slightly from year to year. Read the full <a href="/disclaimer/">disclaimer</a>.</p>
+  </article>
+</BaseLayout>

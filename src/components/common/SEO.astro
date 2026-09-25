@@ -1,0 +1,57 @@
+---
+import { OG_IMAGE_PATH, PROJECT_NAME, SITE_ORIGIN, SITE_TAGLINE, type Crumb } from '../../config/site';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  /** True on the homepage: also describes the WebSite in structured data. */
+  isHome?: boolean;
+  /** Same trail as the visible breadcrumb navigation, used for BreadcrumbList. */
+  breadcrumbs?: Crumb[];
+}
+
+const { title, description, noindex = false, isHome = false, breadcrumbs = [] } = Astro.props;
+const pageTitle = `${title} | ${PROJECT_NAME}`;
+
+// Canonical URLs use the query-free path with a trailing slash, matching the static build output.
+const path = `${Astro.url.pathname.replace(/\/+$/, '')}/`;
+const absolute = (value: string) => new URL(value, SITE_ORIGIN).href;
+const canonical = SITE_ORIGIN && !noindex ? absolute(path) : undefined;
+const image = SITE_ORIGIN ? absolute(OG_IMAGE_PATH) : undefined;
+
+// Structured data only describes what the page really is, and only with a real origin.
+const graph: Record<string, unknown>[] = [];
+if (canonical) {
+  const website = { '@type': 'WebSite', '@id': absolute('/#website'), url: absolute('/'), name: PROJECT_NAME, description: SITE_TAGLINE, inLanguage: 'en' };
+  if (isHome) graph.push(website);
+  graph.push({ '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: pageTitle, description, inLanguage: 'en', isPartOf: { '@type': 'WebSite', '@id': website['@id'], url: website.url, name: PROJECT_NAME } });
+  if (breadcrumbs.length > 1) {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((crumb, index) => ({ '@type': 'ListItem', position: index + 1, name: crumb.name, item: absolute(crumb.path) })),
+    });
+  }
+}
+const jsonLd = graph.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c') : '';
+---
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+{canonical && <link rel="canonical" href={canonical} />}
+{noindex && <meta name="robots" content="noindex, follow" />}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={PROJECT_NAME} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+{canonical && <meta property="og:url" content={canonical} />}
+{image && <meta property="og:image" content={image} />}
+{image && <meta property="og:image:width" content="1200" />}
+{image && <meta property="og:image:height" content="630" />}
+{image && <meta property="og:image:alt" content={`${PROJECT_NAME}: ${SITE_TAGLINE}`} />}
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+{image && <meta name="twitter:image" content={image} />}
+{jsonLd && <script type="application/ld+json" set:html={jsonLd} />}

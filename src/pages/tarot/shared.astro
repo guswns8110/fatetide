@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SharedReadingView from '../../components/tarot/SharedReadingView';
+import { getArtworkIds } from '../../utils/artwork';
+import '../../styles/tarot.css';
+
+const artworkIds = getArtworkIds();
+---
+
+<BaseLayout title="A Shared Tarot Reading" description="Open a tarot reading a friend shared with you, then draw your own." noindex>
+  <section class="one-card-intro container"><p class="eyebrow">A reading shared with you</p><h1>Someone shared their cards.</h1><p class="lead">Here is the reading they drew. Take it as a prompt for reflection, then draw a reading of your own.</p><a href="/" class="back-home">← Back to home</a></section>
+  <SharedReadingView artworkIds={artworkIds} client:load />
+  <noscript>
+    <style is:inline>.shared-app { display: none; }</style>
+    <div class="one-card-app"><div class="reading-panel shared-noscript"><p>JavaScript is required to open a shared tarot reading.</p><p><a href="/">Home</a> · <a href="/tarot/one-card/">One Card Reading</a></p></div></div>
+  </noscript>
+</BaseLayout>

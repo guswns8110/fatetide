@@ -1,0 +1,15 @@
+---
+import { tarotReadings } from '../../config/site';
+
+interface Props { current: string }
+const { current } = Astro.props;
+const withSlash = (value: string) => `${value.replace(/\/+$/, '')}/`;
+const others = tarotReadings.filter((reading) => withSlash(reading.href) !== withSlash(current));
+---
+
+<nav class="related-readings container" aria-labelledby="related-title">
+  <h2 id="related-title">Continue with another reading</h2>
+  <ul>
+    {others.map((reading) => <li><a href={reading.href}><strong>{reading.label}</strong><span>{reading.text}</span></a></li>)}
+  </ul>
+</nav>

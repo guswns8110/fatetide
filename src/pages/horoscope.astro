@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/common/Breadcrumbs.astro';
+import NoScriptNote from '../components/common/NoScriptNote.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import type { Crumb } from '../config/site';
+import DailyHoroscope from '../components/horoscope/DailyHoroscope';
+import { zodiacSigns } from '../data/zodiac/signs';
+import { capitalize } from '../utils/horoscope';
+import '../styles/tarot.css';
+import '../styles/zodiac.css';
+
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Horoscope', path: '/horoscope/' },
+];
+---
+
+<BaseLayout title="Daily Horoscope for All 12 Zodiac Signs" description="Choose your zodiac sign for today's horoscope: general, love, career, money, and advice. Explore a full guide to each of the 12 signs." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <NoScriptNote feature="the daily horoscope picker" />
+  <section class="one-card-intro container"><p class="eyebrow">Daily horoscope</p><h1>What does today invite?</h1><p class="lead">Choose your Sun sign for a short reading on the day's general mood, love, career, money, and advice. It is a prompt for reflection, and it stays the same all day.</p><a href="/" class="back-home">← Back to home</a></section>
+  <DailyHoroscope client:load />
+  <section class="zodiac-article zodiac-index" aria-labelledby="guides-title">
+    <h2 id="guides-title">Zodiac guides</h2>
+    <p>Each guide covers personality, strengths, challenges, and how the sign tends to approach love, career, and money.</p>
+    <ul class="guide-list">
+      {zodiacSigns.map((sign) => <li><a href={`/zodiac/${sign.id}/`}><span class="guide-symbol" aria-hidden="true">{sign.symbol}</span><span><strong>{sign.name}</strong><small>{sign.dateRange} · {capitalize(sign.element)}</small></span></a></li>)}
+    </ul>
+    <p class="zodiac-disclaimer">Curious how two signs fit together? Try <a href="/compatibility/">zodiac compatibility</a>. For entertainment and personal reflection.</p>
+  </section>
+  <AdSlot placement="horoscope-page-end" />
+</BaseLayout>

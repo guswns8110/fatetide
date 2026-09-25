@@ -1,0 +1,45 @@
+---
+import { PROJECT_NAME, primaryNavigation } from '../../config/site';
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const bare = (value: string) => value.replace(/\/+$/, '') || '/';
+const isSection = (prefix: string) => path === bare(prefix) || path.startsWith(`${bare(prefix)}/`);
+const isCurrent = (item: (typeof primaryNavigation)[number]) => item.href === '/' ? path === '/' : [item.href, ...(item.sections ?? [])].some(isSection);
+---
+
+<header class="site-header">
+  <script is:inline>document.documentElement.classList.add('nav-js');</script>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label={`${PROJECT_NAME} home`}><span aria-hidden="true">✦</span> {PROJECT_NAME}</a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span>Menu</span><i aria-hidden="true"></i></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <ul class="nav-list">
+        {primaryNavigation.map((item) => <li class={item.children ? 'nav-item has-children' : 'nav-item'}>
+          <a href={item.href} aria-current={path === bare(item.href) ? 'page' : undefined} class={isCurrent(item) ? 'is-current' : undefined}>{item.label}</a>
+          {item.children && <ul class="nav-sub" aria-label={`${item.label} readings`}>
+            {item.children.map((child) => <li><a href={child.href} aria-current={path === bare(child.href) ? 'page' : undefined}>{child.label}</a></li>)}
+          </ul>}
+        </li>)}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const menu = document.getElementById('site-nav');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    window.matchMedia('(min-width: 761px)').addEventListener('change', () => setOpen(false));
+  }
+</script>

@@ -1,0 +1,37 @@
+---
+import PolicyPage from '../components/common/PolicyPage.astro';
+---
+
+<PolicyPage
+  title="About Oracle"
+  description="Oracle is a free website for tarot readings, daily horoscopes, and zodiac compatibility, made for personal reflection and entertainment rather than prediction."
+  path="/about/"
+  heading="About Oracle"
+  lead="A calm place for tarot, horoscopes, and zodiac compatibility, made for reflection rather than prediction."
+>
+  <section aria-labelledby="what-title">
+    <h2 id="what-title">What Oracle is</h2>
+    <p>Oracle is a free website with three kinds of readings: tarot, daily horoscopes for the twelve zodiac signs, and zodiac compatibility. It is designed to be quiet, fast, and easy to use on a phone.</p>
+    <ul>
+      <li><a href="/tarot/">Tarot</a>: five ways to draw cards, from a single card to a three-card spread, plus a card for the day.</li>
+      <li><a href="/horoscope/">Horoscope</a>: a short daily reading for each Sun sign, and a full guide to every sign.</li>
+      <li><a href="/compatibility/">Compatibility</a>: how any two signs tend to fit together, in words rather than scores.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="reflection-title">
+    <h2 id="reflection-title">Reflection, not prediction</h2>
+    <p>Tarot, astrology, and compatibility charts are old and much-loved ways of asking questions about ourselves. Oracle treats them that way. A card or a sign offers an image, a theme, and some language for thinking about a situation. It does not tell you what will happen, and nothing on this site is presented as a certain forecast.</p>
+    <p>Readings are for entertainment and personal reflection. They are not medical, legal, financial, or professional advice. Please read the <a href="/disclaimer/">disclaimer</a> for the details.</p>
+  </section>
+
+  <section aria-labelledby="works-title">
+    <h2 id="works-title">How the site works, in brief</h2>
+    <p>Cards are shuffled and drawn in your own browser. Horoscopes and compatibility notes are written text that the site selects using fixed rules. Nothing is generated on the fly by an AI service or a paid API, and no account is needed. The page on <a href="/how-it-works/">how it works</a> explains each part in plain language.</p>
+  </section>
+
+  <section aria-labelledby="privacy-title">
+    <h2 id="privacy-title">Privacy by design</h2>
+    <p>Oracle does not ask for your name, your birth details, or your questions. Your card of the day is kept only in your own browser. The <a href="/privacy/">privacy policy</a> describes exactly what is stored and where.</p>
+  </section>
+</PolicyPage>

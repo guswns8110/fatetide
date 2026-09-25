@@ -1,0 +1,36 @@
+---
+import SEO from '../components/common/SEO.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import { ads } from '../config/ads';
+import type { Crumb } from '../config/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  isHome?: boolean;
+  breadcrumbs?: Crumb[];
+}
+
+const { title, description, noindex, isHome, breadcrumbs } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SEO title={title} description={description} noindex={noindex} isHome={isHome} breadcrumbs={breadcrumbs} />
+    {ads.client && <meta name="google-adsense-account" content={ads.client} />}
+    {ads.active && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads.client}`} crossorigin="anonymous"></script>}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header />
+    <main id="main-content"><slot /></main>
+    <Footer />
+  </body>
+</html>

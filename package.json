@@ -1,0 +1,33 @@
+{
+  "name": "oracle",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test:tarot": "node scripts/validate-tarot.mjs",
+    "test:share": "node scripts/validate-share.mjs",
+    "test:zodiac": "node scripts/validate-zodiac.mjs",
+    "test:seo": "node scripts/validate-seo.mjs",
+    "check:deploy": "node scripts/check-deployment.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "astro": "^5.14.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.5",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "typescript": "^5.9.2"
+  }
+}

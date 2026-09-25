@@ -1,0 +1,23 @@
+---
+import { ads, isValidSlotId } from '../../config/ads';
+
+interface Props {
+  /** AdSense ad unit ID (digits). Without a valid one nothing is rendered in production. */
+  slot?: string;
+  /** Where the slot sits, for future reference only (not sent anywhere). */
+  placement: string;
+}
+
+const { slot, placement } = Astro.props;
+const live = ads.active && isValidSlotId(slot);
+const showDevPlaceholder = !live && import.meta.env.DEV;
+---
+
+{live && (
+  <aside class="ad-slot" aria-label="Advertisement" data-placement={placement}>
+    <p class="ad-label">Advertisement</p>
+    <ins class="adsbygoogle" style="display:block" data-ad-client={ads.client} data-ad-slot={slot} data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </aside>
+)}
+{showDevPlaceholder && <aside class="ad-slot ad-slot-dev" aria-hidden="true" data-placement={placement}>Ad slot: {placement} (shown in development only)</aside>}
