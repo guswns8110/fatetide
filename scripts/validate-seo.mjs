@@ -14,7 +14,11 @@ const emptyEnv = { PUBLIC_SITE_URL: '', PUBLIC_CONTACT_EMAIL: '', PUBLIC_ADSENSE
 
 function build(label, env) {
   const outDir = join(root, label);
-  const result = spawnSync(process.execPath, [pnpm, 'exec', 'astro', 'build', '--outDir', outDir], { cwd: resolve('.'), encoding: 'utf8', env: { ...process.env, ...emptyEnv, ...env } });
+  const { useFileEnv, ...vars } = env;
+  const childEnv = { ...process.env, ...emptyEnv, ...vars };
+  // useFileEnv: let the AdSense values come from the committed .env.production, like a real production build.
+  if (useFileEnv) { delete childEnv.PUBLIC_ADSENSE_CLIENT; delete childEnv.PUBLIC_ADSENSE_ENABLED; }
+  const result = spawnSync(process.execPath, [pnpm, 'exec', 'astro', 'build', '--outDir', outDir], { cwd: resolve('.'), encoding: 'utf8', env: childEnv });
   if (result.status !== 0) throw new Error(`build ${label} failed:\n${result.stdout}\n${result.stderr}`);
   return outDir;
 }
@@ -243,6 +247,22 @@ try {
     assert.ok(!html.includes('googlesyndication') && !html.includes('adsbygoogle'), 'client ID alone must not load ads');
     assert.ok(html.includes('name="google-adsense-account"'));
   }
+
+  // The committed production values: the verification tag is present on every page, and ads stay off.
+  const fileEnv = Object.fromEntries(readFileSync(resolve('.env.production'), 'utf8').split(/\r?\n/).filter((line) => /^[A-Z_]+=/.test(line)).map((line) => line.split(/=(.*)/s).slice(0, 2)));
+  assert.match(fileEnv.PUBLIC_ADSENSE_CLIENT, /^ca-pub-\d{10,20}$/, '.env.production needs a valid publisher ID');
+  assert.equal(fileEnv.PUBLIC_ADSENSE_ENABLED, 'false', '.env.production must keep ads off until AdSense approves the site');
+  assert.deepEqual(Object.keys(fileEnv).sort(), ['PUBLIC_ADSENSE_CLIENT', 'PUBLIC_ADSENSE_ENABLED'], '.env.production may only hold these public values');
+  const prod = pages(build('production-env', { PUBLIC_SITE_URL: ORIGIN, useFileEnv: true }));
+  assert.equal(prod.size, EXPECTED.length);
+  for (const [route, html] of prod) {
+    assert.equal((html.match(/<meta name="google-adsense-account" content="([^"]+)"/g) ?? []).length, 1, `${route}: exactly one verification tag`);
+    assert.equal(meta(html, 'google-adsense-account'), fileEnv.PUBLIC_ADSENSE_CLIENT, route);
+    assert.ok(html.indexOf('google-adsense-account') < html.indexOf('</head>'), `${route}: tag belongs in <head>`);
+    for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot', '<ins ']) assert.ok(!html.includes(needle), `${route}: ads must stay off (found ${needle})`);
+    assert.equal(attr(html, /<link rel="canonical" href="([^"]*)"/) ?? '', NOINDEX.has(route) ? '' : `${ORIGIN}${route}`, `${route}: canonical unchanged by the verification tag`);
+  }
+  assert.ok(!existsSync(join(root, 'production-env', 'ads.txt')), 'no ads.txt yet');
 
   // ---------------------------------------------------------------- ads configuration rules
   const outDir = join(root, 'ads-config');

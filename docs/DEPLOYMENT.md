@@ -54,7 +54,7 @@ Set these under Pages > Settings > Environment variables (Production). They are 
 | `PUBLIC_ADSENSE_CLIENT` | Publisher ID (`ca-pub-` plus digits). When valid it adds the `google-adsense-account` meta tag for site verification. It does not load any ad script by itself. | empty |
 | `PUBLIC_ADSENSE_ENABLED` | Must be exactly `true`, and needs a valid client ID, before the AdSense script and ad slots are rendered. | `false` |
 
-The site builds and runs with all four empty or unset.
+The site builds and runs with all four empty or unset. `.env.production` (committed, public values only) sets `PUBLIC_ADSENSE_CLIENT` to the publisher ID, so the AdSense site-verification meta tag is in every page's `<head>`, and keeps `PUBLIC_ADSENSE_ENABLED=false`, so no ad script or ad slot is rendered. Values set in the Cloudflare dashboard override that file. `pnpm run test:seo` fails if `.env.production` ever enables ads or holds anything else.
 
 ### Trailing slashes and redirects
 

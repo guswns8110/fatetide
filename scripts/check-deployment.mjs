@@ -158,6 +158,14 @@ await check('AdSense is off', async () => {
   const { response } = await fetchChain('/ads.txt');
   assert.equal(response.status, 404, 'ads.txt must not exist until a real publisher ID is added');
 });
+await check('AdSense site-verification tag (if configured) is valid and in <head>', async () => {
+  const { text } = await fetchChain('/');
+  const id = meta(text, 'google-adsense-account');
+  if (id === undefined) return 'not configured';
+  assert.match(id, /^ca-pub-\d{10,20}$/, `invalid publisher ID ${id}`);
+  assert.ok(text.indexOf('google-adsense-account') < text.indexOf('</head>'), 'tag must be inside <head>');
+  return id;
+});
 await check('no contact address published unless configured', async () => {
   const { text } = await fetchChain('/privacy/');
   return text.includes('mailto:') ? 'mailto present (contact email configured)' : 'no mailto (contact email not configured)';
