@@ -155,8 +155,17 @@ await check('AdSense is off', async () => {
     const { text } = await fetchChain(path);
     for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot']) assert.ok(!text.includes(needle), `${path} contains ${needle}`);
   }
-  const { response } = await fetchChain('/ads.txt');
-  assert.equal(response.status, 404, 'ads.txt must not exist until a real publisher ID is added');
+});
+await check('ads.txt is plain text with one valid line', async () => {
+  const { response, text, finalUrl } = await fetchChain('/ads.txt');
+  assert.equal(response.status, 200, `status ${response.status}`);
+  assert.equal(finalUrl.pathname, '/ads.txt', 'must not redirect');
+  assert.match(response.headers.get('content-type') ?? '', /^text\/plain/, `content-type ${response.headers.get('content-type')}`);
+  assert.ok(!/<html|<!doctype/i.test(text), 'served HTML instead of text');
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  assert.equal(lines.length, 1, `${lines.length} lines`);
+  assert.match(lines[0], /^google\.com, pub-\d{10,20}, DIRECT, f08c47fec0942fa0$/);
+  return lines[0];
 });
 await check('AdSense site-verification tag (if configured) is valid and in <head>', async () => {
   const { text } = await fetchChain('/');

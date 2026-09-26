@@ -213,14 +213,14 @@ try {
   assert.deepEqual(jpegSize(og), { width: 1200, height: 630 });
   assert.ok(og.length < 400_000, 'social image should stay small');
 
-  // Ads are off by default: no Google script, no ad markup, no verification meta, no ads.txt.
+  // With no AdSense values set: no Google script, no ad markup, no verification meta.
   const everything = [...site.values()].join('\n');
   for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot', 'google-adsense-account']) assert.ok(!everything.includes(needle), `ads off: found ${needle}`);
-  assert.ok(!existsSync(join(main, 'ads.txt')), 'ads.txt must not be created without a real publisher ID');
-  if (existsSync(resolve('public/ads.txt'))) {
-    const adsTxt = readFileSync(resolve('public/ads.txt'), 'utf8');
-    assert.ok(!/X{6,}/i.test(adsTxt) && /^google\.com, pub-\d{10,20}, DIRECT, f08c47fec0942fa0$/m.test(adsTxt), 'public/ads.txt must hold the real publisher ID');
-  }
+  // ads.txt is a single real line, is copied unchanged into every build, and is never a placeholder.
+  const adsTxt = readFileSync(resolve('public/ads.txt'), 'utf8');
+  assert.match(adsTxt, /^google\.com, pub-\d{10,20}, DIRECT, f08c47fec0942fa0\r?\n?$/, 'public/ads.txt must be exactly one line with the real publisher ID');
+  assert.ok(!/X{6,}/i.test(adsTxt), 'public/ads.txt must not hold the placeholder');
+  assert.equal(readFileSync(join(main, 'ads.txt'), 'utf8'), adsTxt, 'ads.txt is served unchanged');
   assert.ok(existsSync(resolve('deploy/ads.txt.template')));
 
   // ---------------------------------------------------------------- no domain configured yet
@@ -241,7 +241,7 @@ try {
     assert.ok(!html.includes('class="ad-slot'), `${route}: an ad slot without an ad unit ID must render nothing`);
     assert.ok(html.includes('mailto:hello@example.test'), `${route}: contact address`);
   }
-  assert.ok(!existsSync(join(root, 'ads', 'ads.txt')));
+  assert.equal(readFileSync(join(root, 'ads', 'ads.txt'), 'utf8'), adsTxt);
   const verifyOnly = pages(build('verify', { PUBLIC_ADSENSE_ENABLED: 'false', PUBLIC_ADSENSE_CLIENT: 'ca-pub-1234567890123456' }));
   for (const html of verifyOnly.values()) {
     assert.ok(!html.includes('googlesyndication') && !html.includes('adsbygoogle'), 'client ID alone must not load ads');
@@ -262,7 +262,9 @@ try {
     for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot', '<ins ']) assert.ok(!html.includes(needle), `${route}: ads must stay off (found ${needle})`);
     assert.equal(attr(html, /<link rel="canonical" href="([^"]*)"/) ?? '', NOINDEX.has(route) ? '' : `${ORIGIN}${route}`, `${route}: canonical unchanged by the verification tag`);
   }
-  assert.ok(!existsSync(join(root, 'production-env', 'ads.txt')), 'no ads.txt yet');
+  // ads.txt must name the same publisher as the verification tag.
+  assert.equal(adsTxt.trim(), `google.com, pub-${fileEnv.PUBLIC_ADSENSE_CLIENT.replace('ca-pub-', '')}, DIRECT, f08c47fec0942fa0`, 'ads.txt publisher must match PUBLIC_ADSENSE_CLIENT');
+  assert.equal(readFileSync(join(root, 'production-env', 'ads.txt'), 'utf8'), adsTxt);
 
   // ---------------------------------------------------------------- ads configuration rules
   const outDir = join(root, 'ads-config');

@@ -90,7 +90,7 @@ Only the site owner can do these:
 
 ### ads.txt
 
-There is no `public/ads.txt`, on purpose. After approval, copy `deploy/ads.txt.template` to `public/ads.txt`, replace `pub-XXXXXXXXXXXXXXXX` with the real ID from AdSense, and redeploy. `pnpm run test:seo` fails if `public/ads.txt` still holds a placeholder, and `check:deploy` expects `/ads.txt` to be absent until you add it (edit that expectation when you do).
+`public/ads.txt` holds the single AdSense line (`google.com, pub-<id>, DIRECT, f08c47fec0942fa0`) and is served at `/ads.txt` as plain text. It must name the same publisher as `PUBLIC_ADSENSE_CLIENT`; `pnpm run test:seo` and `pnpm run check:deploy` both check this. `deploy/ads.txt.template` is only a reference for the format.
 
 ### Consent (EEA, United Kingdom, Switzerland)
 
