@@ -46,7 +46,8 @@ const canonicalOf = (html) => html.match(/<link rel="canonical" href="([^"]*)"/)
 
 const SHARED = '/tarot/shared/?v=1&t=one-card&c=career&cards=the-lovers.u';
 const COMPAT = '/compatibility/?a=aries&b=scorpio';
-const pages = ['/', '/yes-or-no/', '/today/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/horoscope/', '/compatibility/', '/zodiac/aries/', '/zodiac/pisces/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'];
+const GUIDES = ['/guides/', '/guides/yes-no-tarot/', '/guides/upright-vs-reversed/', '/guides/daily-tarot/'];
+const pages = ['/', '/yes-or-no/', '/today/', ...GUIDES, '/horoscope/', '/compatibility/', '/zodiac/aries/', '/zodiac/pisces/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'];
 
 for (const path of [...pages, SHARED, COMPAT]) {
   await check(`200 ${path}`, async () => {
@@ -57,8 +58,8 @@ for (const path of [...pages, SHARED, COMPAT]) {
   });
 }
 
-// Slash redirects and query preservation.
-for (const path of ['/tarot', '/horoscope', '/about', '/zodiac/aries']) {
+// Slash redirects and query preservation, for pages that still exist at their own address.
+for (const path of ['/horoscope', '/about', '/zodiac/aries', '/guides', '/guides/yes-no-tarot']) {
   await check(`slash-less ${path}`, async () => {
     const { response, finalUrl, chain } = await fetchChain(path);
     assert.equal(response.status, 200, `status ${response.status}`);
@@ -78,7 +79,7 @@ for (const path of ['/tarot/shared?v=1&t=one-card&c=career&cards=the-lovers.u', 
 }
 
 // SEO tags use the real origin.
-for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/scorpio/', '/privacy/', '/compatibility/']) {
+for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/scorpio/', '/privacy/', ...GUIDES]) {
   await check(`seo ${path}`, async () => {
     const { text } = await fetchChain(path);
     const expected = `${origin}${path}`;
@@ -92,8 +93,27 @@ for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/scorpio/', '/privacy
     assert.equal(meta(text, 'robots'), undefined, 'must be indexable');
   });
 }
-// Old addresses redirect permanently to the new pages.
-for (const [from, to] of [['/tarot/yes-or-no/', '/yes-or-no/'], ['/tarot/daily/', '/today/'], ['/tarot/yes-or-no', '/yes-or-no/'], ['/tarot/daily', '/today/']]) {
+await check('the 3 guides have substantial, distinct editorial content', async () => {
+  const bodies = [];
+  for (const path of GUIDES.slice(1)) {
+    const { text } = await fetchChain(path);
+    const body = text.match(/<article class="zodiac-article[^"]*">([\s\S]*?)<\/article>/)?.[1] ?? '';
+    const words = body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    assert.ok(words >= 350, `${path}: only ${words} words`);
+    bodies.push(body);
+  }
+  return `${bodies.length} guides checked`;
+});
+// Old addresses redirect permanently to the new pages (public/_redirects).
+const LEGACY_REDIRECTS = [
+  ['/tarot/yes-or-no/', '/yes-or-no/'], ['/tarot/yes-or-no', '/yes-or-no/'],
+  ['/tarot/daily/', '/today/'], ['/tarot/daily', '/today/'],
+  ['/tarot/', '/'], ['/tarot', '/'],
+  ['/tarot/one-card/', '/yes-or-no/'], ['/tarot/one-card', '/yes-or-no/'],
+  ['/tarot/three-card/', '/yes-or-no/'], ['/tarot/three-card', '/yes-or-no/'],
+  ['/tarot/love/', '/yes-or-no/'], ['/tarot/love', '/yes-or-no/'],
+];
+for (const [from, to] of LEGACY_REDIRECTS) {
   await check(`301 ${from} -> ${to}`, async () => {
     const { response, finalUrl, chain } = await fetchChain(from);
     assert.ok(chain[0]?.startsWith('301 '), `first hop should be 301, got: ${chain[0] ?? 'no redirect'}`);
@@ -102,14 +122,21 @@ for (const [from, to] of [['/tarot/yes-or-no/', '/yes-or-no/'], ['/tarot/daily/'
     return chain.join(' | ');
   });
 }
-// De-emphasized modes still work but are not indexed.
-for (const path of ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']) {
-  await check(`noindex ${path}`, async () => {
-    const { text } = await fetchChain(path);
+// Old share links for the retired reading types still restore correctly.
+for (const [type, cards] of [['three-card', 'the-fool.u,four-of-swords.r,the-star.u'], ['love', 'the-empress.u,the-tower.r'], ['one-card', 'the-lovers.u']]) {
+  await check(`old shared link still works: t=${type}`, async () => {
+    const path = `${SHARED.split('?')[0]}?v=1&t=${type}&c=career&cards=${cards}`;
+    const { response, text } = await fetchChain(path);
+    assert.equal(response.status, 200);
     assert.equal(meta(text, 'robots'), 'noindex, follow');
-    assert.equal(canonicalOf(text), undefined);
   });
 }
+// Compatibility still works but is not promoted in search.
+await check('compatibility is noindex, follow with no canonical', async () => {
+  const { text } = await fetchChain('/compatibility/');
+  assert.equal(meta(text, 'robots'), 'noindex, follow');
+  assert.equal(canonicalOf(text), undefined);
+});
 await check('main navigation has two links', async () => {
   const { text } = await fetchChain('/');
   const nav = text.match(/<nav class="site-nav"[\s\S]*?<\/nav>/)?.[0] ?? '';
@@ -137,10 +164,11 @@ await check('sitemap.xml', async () => {
   const { response, text } = await fetchChain('/sitemap.xml');
   assert.equal(response.status, 200);
   const locs = [...text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  assert.ok(locs.length >= 22, `${locs.length} URLs`);
-  for (const hidden of ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']) assert.ok(!locs.includes(`${origin}${hidden}`), `${hidden} must not be in the sitemap`);
+  assert.ok(locs.length >= 24, `${locs.length} URLs`);
+  assert.ok(!locs.includes(`${origin}/compatibility/`), '/compatibility/ must not be in the sitemap');
+  for (const guide of GUIDES) assert.ok(locs.includes(`${origin}${guide}`), `${guide} must be in the sitemap`);
   assert.ok(locs.every((loc) => loc.startsWith(`${origin}/`) && loc.endsWith('/')), 'absolute, origin-matched, trailing slash');
-  assert.ok(!locs.some((loc) => loc.includes('shared') || loc.includes('404')), 'no shared or 404 pages');
+  assert.ok(!locs.some((loc) => loc.includes('shared') || loc.includes('404') || loc.includes('/tarot/')), 'no shared, 404, or retired tarot pages');
   return `${locs.length} URLs`;
 });
 await check('og-default.jpg', async () => {
@@ -151,7 +179,7 @@ await check('og-default.jpg', async () => {
 
 // Ads are off.
 await check('AdSense is off', async () => {
-  for (const path of ['/', '/tarot/one-card/', '/zodiac/leo/', '/horoscope/']) {
+  for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/leo/', '/horoscope/', '/guides/yes-no-tarot/']) {
     const { text } = await fetchChain(path);
     for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot']) assert.ok(!text.includes(needle), `${path} contains ${needle}`);
   }
@@ -175,9 +203,12 @@ await check('AdSense site-verification tag (if configured) is valid and in <head
   assert.ok(text.indexOf('google-adsense-account') < text.indexOf('</head>'), 'tag must be inside <head>');
   return id;
 });
-await check('no contact address published unless configured', async () => {
+await check('contact address is published (or absent if not yet configured)', async () => {
   const { text } = await fetchChain('/privacy/');
-  return text.includes('mailto:') ? 'mailto present (contact email configured)' : 'no mailto (contact email not configured)';
+  const mailto = text.match(/mailto:([^"]+)"/)?.[1];
+  if (!mailto) return 'no mailto (contact email not configured)';
+  assert.match(mailto, /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/, `malformed contact address ${mailto}`);
+  return `mailto:${mailto}`;
 });
 
 if (checkHeaders) {

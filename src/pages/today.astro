@@ -22,6 +22,66 @@ const crumbs: Crumb[] = [
   <NoScriptNote feature="today's fortune" />
   <section class="one-card-intro container"><p class="eyebrow">Today's fortune</p><h1>A card and a little guidance for today.</h1><p class="lead">Reveal your tarot card for the day, then, if you like, choose your zodiac sign for today's horoscope. Your card is saved only on this device and stays the same until tomorrow.</p><a href="/" class="back-home">← Back to home</a></section>
   <TodayFortune artworkIds={artworkIds} client:load />
+
+  <article class="zodiac-article">
+    <section aria-labelledby="works-title">
+      <h2 id="works-title">How Today's Fortune Works</h2>
+      <p>Your daily card is tied to your device's local date. The first time you open this page on a given day, a card is drawn and saved in your browser's local storage, together with its orientation and the date. Reloading the page, or coming back later the same day, shows that same card rather than a new one. Once your local date changes, the old card is retired and a new draw is waiting.</p>
+      <p>The zodiac part underneath works differently: nothing is drawn or saved. Each sign has a written set of short reflections, and the one shown for a given day comes from a fixed rule based only on today's date and the sign you choose. Anyone with the same sign sees the same line on the same date, and it is not calculated from planetary positions, transits, or a birth chart.</p>
+    </section>
+
+    <section aria-labelledby="use-title">
+      <h2 id="use-title">How to Use Your Daily Card</h2>
+      <p>The five short readings under your card, general, love, work, money, and advice, are written to be read as prompts rather than instructions. A useful way to use them is to pick the one section that feels closest to what is actually on your mind that day, and let it sharpen a question rather than answer one for you: not "what will happen with money today," but "what is the advice line asking me to notice about how I am handling money right now."</p>
+    </section>
+
+    <section aria-labelledby="zodiac-title">
+      <h2 id="zodiac-title">Tarot and Your Zodiac</h2>
+      <p>The card and the horoscope are two different kinds of content, and FateTide keeps them that way rather than blending them into one claim. The tarot card is a symbolic prompt for the day, drawn once and kept until tomorrow. The zodiac line is a sign-based daily reflection, the same for everyone who shares your sign. Reading both is fine, and treating the pair as a combined forecast is not the intent; each is a separate, small nudge to think about the day ahead.</p>
+    </section>
+
+    <section aria-labelledby="reflection-title">
+      <h2 id="reflection-title">A Simple Daily Reflection</h2>
+      <ol class="steps">
+        <li><span>01</span><h3>Read</h3><p>Look at your card and, if you like, your sign's line for the day.</p></li>
+        <li><span>02</span><h3>Reflect</h3><p>Notice which part actually applies to something you are dealing with today.</p></li>
+        <li><span>03</span><h3>Carry one question</h3><p>Take a single line or question from the reading with you, rather than the whole page.</p></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+      <div>
+        <h3>Why is my card the same after refreshing?</h3>
+        <p>It is saved in your browser's local storage for the current local date, on purpose, so reloading the page does not draw a new card by accident.</p>
+      </div>
+      <div>
+        <h3>When does my daily card change?</h3>
+        <p>At the moment your device's local date changes. A different browser, a different device, or clearing this site's data also starts a fresh draw.</p>
+      </div>
+      <div>
+        <h3>Is today's horoscope based on live planetary positions?</h3>
+        <p>No. It comes from a written set of reflections for each sign, and a fixed rule picks one line per sign per date. It is not an astronomical calculation.</p>
+      </div>
+      <div>
+        <h3>Can I share today's reading?</h3>
+        <p>Yes. Share My Reading makes a link with the card, its orientation, and the date; it never includes anything you typed, and the shared page is not listed in search engines.</p>
+      </div>
+      <div>
+        <h3>Why might two people with the same zodiac sign see the same daily message?</h3>
+        <p>Because the horoscope is deterministic by date and sign, not personalized. Everyone with that sign sees the same line on the same day.</p>
+      </div>
+      <div>
+        <h3>Does the tarot card say something different from the zodiac line?</h3>
+        <p>Often, yes, since they come from separate written sources and separate logic. That is expected; they are two independent prompts, not one combined prediction.</p>
+      </div>
+      </div>
+    </section>
+
+    <p class="zodiac-disclaimer">Read more in the <a href="/guides/daily-tarot/">Daily Tarot guide</a>, or explore your <a href="/horoscope/">zodiac sign</a>. For entertainment and personal reflection.</p>
+  </article>
+
   <RelatedReadings current="/today/" />
   <AdSlot placement="today-below-reading" />
 </BaseLayout>

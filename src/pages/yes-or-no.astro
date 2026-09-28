@@ -8,6 +8,7 @@ import YesNoReading from '../components/tarot/YesNoReading';
 import RelatedReadings from '../components/tarot/RelatedReadings.astro';
 import { getArtworkIds } from '../utils/artwork';
 import '../styles/tarot.css';
+import '../styles/zodiac.css';
 
 const artworkIds = getArtworkIds();
 const crumbs: Crumb[] = [
@@ -21,6 +22,82 @@ const crumbs: Crumb[] = [
   <NoScriptNote feature="tarot readings" />
   <section class="one-card-intro container"><p class="eyebrow">A little clarity</p><h1>Yes, no, or not yet.</h1><p class="lead">Hold a question in mind and draw a card. Your answer comes in degrees, with a reflection on why, because most questions are more nuanced than yes or no.</p><a href="/" class="back-home">← Back to home</a></section>
   <YesNoReading artworkIds={artworkIds} client:load />
+
+  <article class="zodiac-article">
+    <section aria-labelledby="works-title">
+      <h2 id="works-title">How Yes or No Tarot Works</h2>
+      <p>This reading draws from FateTide's full 78-card tarot deck, the same deck used everywhere else on the site. Three cards are laid face down; the one you choose is turned over, and it can land upright or reversed, roughly one draw in three. The card's own written meaning, for that direction, decides where your answer sits on a five-point scale from yes to no.</p>
+      <p>None of this is presented as fact about the future. It is a structured way to look at a question you already have some feeling about, and a reason to pause before answering it in your head the same way you always do.</p>
+    </section>
+
+    <section aria-labelledby="question-title">
+      <h2 id="question-title">What Makes a Good Yes or No Question?</h2>
+      <p>The clearer the question, the more useful the card is as a prompt. A question about your own next step tends to work better than one that asks the deck to settle something outside your control.</p>
+      <p>Questions that tend to work well:</p>
+      <ul>
+        <li>"Should I reconsider how I approach this project?"</li>
+        <li>"Is this a good time to have this conversation?"</li>
+        <li>"Would it help to slow down on this decision?"</li>
+      </ul>
+      <p>A few things are worth avoiding:</p>
+      <ul>
+        <li>Drawing the same question again and again until a card agrees with what you already wanted to hear.</li>
+        <li>Handing a medical, legal, or financial decision to a card instead of a qualified professional.</li>
+        <li>Asking the deck to state, with certainty, what someone else is feeling or is about to do.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="read-title">
+      <h2 id="read-title">How to Read Your Answer</h2>
+      <p>The answer lands on one of five points, from a clear lean toward yes to a clear lean toward no, with room in the middle for a genuinely mixed picture:</p>
+      <ul>
+        <li><strong>Yes</strong> — the reading leans clearly supportive.</li>
+        <li><strong>Likely yes</strong> — supportive, with a detail or two still worth checking.</li>
+        <li><strong>Unclear</strong> — a mixed picture; more time or information may help before you decide.</li>
+        <li><strong>Likely no</strong> — leaning cautious; something may need to change first.</li>
+        <li><strong>No</strong> — leaning toward holding back, or looking for a different path.</li>
+      </ul>
+      <p>Orientation shifts the tone rather than flipping the answer outright: a card drawn reversed usually softens its upright meaning into something more internal, delayed, or worth reconsidering. The <a href="/guides/upright-vs-reversed/">Upright vs Reversed guide</a> goes into this in more detail.</p>
+    </section>
+
+    <section aria-labelledby="useful-title">
+      <h2 id="useful-title">When Tarot Is Most Useful</h2>
+      <p>A card is at its most useful as a prompt, not an instruction. It can be a way to reframe a question you have been circling, a line to sit with while journaling, or simply a pause before you act on the first reaction that comes to mind. Used that way, the point is not that the card is right; it is that reading it gives you a moment to notice what you already think.</p>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+      <div>
+        <h3>Can I ask the same question twice?</h3>
+        <p>You can, but drawing again and again until you get an answer you like defeats the point of asking. If a question feels unresolved, it is usually more useful to rewrite it than to redraw it.</p>
+      </div>
+      <div>
+        <h3>Does a reversed card always mean no?</h3>
+        <p>No. Reversed shifts a card's meaning toward something more internal, delayed, or blocked; it is not a fixed penalty. A reversed card whose upright meaning already leans positive can still read as a likely yes.</p>
+      </div>
+      <div>
+        <h3>Is this reading random?</h3>
+        <p>The shuffle and the choice of orientation use your browser's random number generator, so yes, the draw itself is random. What is not random is the meaning attached to each card and direction, which is fixed and written in advance.</p>
+      </div>
+      <div>
+        <h3>Can tarot predict the future?</h3>
+        <p>FateTide does not treat it that way. Nothing here has been tested for predictive accuracy, and the reading is offered as a prompt for reflection, not a forecast.</p>
+      </div>
+      <div>
+        <h3>Should I make an important decision based on this reading?</h3>
+        <p>Treat it as one input for your own thinking, not the deciding factor, especially for medical, legal, or financial matters. See the <a href="/disclaimer/">disclaimer</a> for more on this.</p>
+      </div>
+      <div>
+        <h3>How is the yes or no answer actually decided?</h3>
+        <p>Every card in the deck has a fixed answer written for its upright and reversed meaning, from yes down to no. Drawing a card and noting its orientation looks up that fixed value; nothing is generated on the fly.</p>
+      </div>
+      </div>
+    </section>
+
+    <p class="zodiac-disclaimer">Read more in the <a href="/guides/yes-no-tarot/">Yes or No Tarot guide</a>. For entertainment and personal reflection.</p>
+  </article>
+
   <RelatedReadings current="/yes-or-no/" />
   <AdSlot placement="yes-or-no-below-reading" />
 </BaseLayout>

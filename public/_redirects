@@ -2,3 +2,11 @@
 /tarot/yes-or-no/ /yes-or-no/ 301
 /tarot/daily /today/ 301
 /tarot/daily/ /today/ 301
+/tarot / 301
+/tarot/ / 301
+/tarot/one-card /yes-or-no/ 301
+/tarot/one-card/ /yes-or-no/ 301
+/tarot/three-card /yes-or-no/ 301
+/tarot/three-card/ /yes-or-no/ 301
+/tarot/love /yes-or-no/ 301
+/tarot/love/ /yes-or-no/ 301

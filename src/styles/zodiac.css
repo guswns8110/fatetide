@@ -42,6 +42,9 @@
 .zodiac-article h2 { margin: 2.6rem 0 .8rem; color: #eee5df; font-size: clamp(1.6rem, 4vw, 2.1rem); line-height: 1.25; letter-spacing: -.02em; }
 .zodiac-article p, .zodiac-article li { color: #cfc8d6; font-size: .95rem; line-height: 1.8; }
 .zodiac-article a { color: #d9bc89; }
+.zodiac-article h3 { margin: 1.6rem 0 .5rem; color: #e9cb95; font-size: 1.1rem; }
+.zodiac-article h3:first-child { margin-top: 0; }
+.faq-list { display: grid; gap: 1.4rem; }
 .zodiac-index h2:first-child { margin-top: 3.5rem; }
 .sign-title-symbol { color: #e2c38d; }
 .zodiac-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin: 0 0 1rem; }
@@ -66,6 +69,11 @@
 .guide-list small { display: block; margin-top: .2rem; color: #c3b9c6; font-size: .72rem; }
 .zodiac-article .zodiac-disclaimer { margin-top: 2.5rem; color: #a9a1b2; font-size: .8rem; }
 @media (max-width: 900px) { .sign-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .guide-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.guide-table-wrap { overflow-x: auto; margin: 1rem 0; }
+.guide-table { width: 100%; min-width: 360px; border-collapse: collapse; }
+.guide-table th, .guide-table td { padding: .6rem .8rem; border: 1px solid #ffffff22; text-align: left; font-size: .88rem; color: #cfc8d6; vertical-align: top; }
+.guide-table th { color: #e9cb95; font-weight: 600; background: #ffffff08; }
+
 @media (max-width: 600px) {
   .sign-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .compat-form { grid-template-columns: 1fr; gap: .8rem; }
@@ -73,4 +81,5 @@
   .zodiac-article { width: min(100% - 2rem, 460px); }
   .zodiac-columns { grid-template-columns: 1fr; }
   .guide-list { grid-template-columns: 1fr; }
+  .guide-table { min-width: 460px; }
 }

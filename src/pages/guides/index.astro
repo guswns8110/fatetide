@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
+import { guides, type Crumb } from '../../config/site';
+import '../../styles/tarot.css';
+import '../../styles/zodiac.css';
+
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Guides', path: '/guides/' },
+];
+---
+
+<BaseLayout title="Tarot Guides" description="Practical guides to yes or no tarot, upright and reversed cards, and using a daily tarot card, written to go with FateTide's readings." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <section class="one-card-intro container"><p class="eyebrow">Guides</p><h1>Learn as you read.</h1><p class="lead">Three short guides that go deeper than the reading pages: how to ask a question, what a reversed card changes, and how to use a card a day.</p><a href="/" class="back-home">← Back to home</a></section>
+  <article class="zodiac-article zodiac-index">
+    <ul class="guide-list">
+      {guides.map((guide) => <li><a href={guide.href}><span><strong>{guide.label}</strong><small>{guide.text}</small></span></a></li>)}
+    </ul>
+    <p class="zodiac-disclaimer">Guides are written to match how FateTide's readings actually work, not general tarot lore. For entertainment and personal reflection.</p>
+  </article>
+</BaseLayout>

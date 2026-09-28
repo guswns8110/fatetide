@@ -12,18 +12,20 @@ import YesNoResult from './YesNoResult';
 
 type State = { status: 'loading' } | { status: 'valid'; reading: SharedReading } | { status: 'invalid' };
 
+// One Card, Three Card, and Love no longer have their own pages, so a shared link to one of
+// those types sends the visitor to Yes or No, the closest reading that still works.
 const ownReading: Record<ReadingType, { label: string; href: string }> = {
-  'one-card': { label: 'Draw Your Own Card', href: '/tarot/one-card/' },
+  'one-card': { label: 'Draw Your Own Card', href: '/yes-or-no/' },
   'yes-or-no': { label: 'Ask Your Own Question', href: '/yes-or-no/' },
-  'three-card': { label: 'Draw Your Three Cards', href: '/tarot/three-card/' },
-  love: { label: 'Try Your Own Love Reading', href: '/tarot/love/' },
+  'three-card': { label: 'Draw Your Three Cards', href: '/yes-or-no/' },
+  love: { label: 'Try Your Own Reading', href: '/yes-or-no/' },
   daily: { label: "See Today's Fortune", href: '/today/' },
 };
 
 function Actions({ label, href }: { label: string; href: string }) {
   return <div className="shared-actions">
     <a className="button button-primary" href={href}>{label} <span aria-hidden="true">↗</span></a>
-    <a className="shared-explore" href="/#readings">Explore all readings</a>
+    <a className="shared-explore" href="/">Explore FateTide</a>
   </div>;
 }
 
@@ -46,7 +48,7 @@ export default function SharedReadingView({ artworkIds }: { artworkIds: string[]
       {state.status === 'invalid' && <section className="tarot-result shared-invalid" aria-labelledby="shared-invalid-heading">
         <h2 id="shared-invalid-heading">This reading link is invalid or incomplete.</h2>
         <p className="result-keywords">The link may have been cut off when it was copied. You can start a reading of your own instead.</p>
-        <Actions label="Start a New Reading" href="/tarot/one-card/" />
+        <Actions label="Start a New Reading" href="/yes-or-no/" />
       </section>}
       {state.status === 'valid' && <SharedResult reading={state.reading} artworkIds={artworkIds} />}
     </div>

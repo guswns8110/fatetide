@@ -26,19 +26,23 @@ const email = (import.meta.env.PUBLIC_CONTACT_EMAIL || '').trim();
 export const CONTACT_EMAIL = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(email) ? email : '';
 
 /** Shown on policy pages. Update it whenever a policy page changes materially. */
-export const POLICY_UPDATED = 'September 26, 2026';
+export const POLICY_UPDATED = 'September 28, 2026';
 
 /**
- * The two things visitors see: Yes or No, and Today's Fortune. Everything else (One Card, Three
- * Card, Love, the Tarot hub) still works at its old address but is not linked from the main
- * navigation or the homepage.
+ * The two things visitors see: Yes or No, and Today's Fortune. One Card, Three Card, Love, and
+ * the Tarot hub were retired (public/_redirects sends their old addresses to /yes-or-no/ and /);
+ * the reading types themselves, and shared links to them, still work (see shareReading.ts).
  */
 export const tarotReadings = [
-  { label: 'Yes or No', href: '/yes-or-no/', core: true, symbol: '◐', tag: 'A little clarity', text: 'Ask a question. Draw one card.' },
-  { label: "Today's Fortune", href: '/today/', core: true, symbol: '☀', tag: 'A daily ritual', text: 'A card and a little guidance for the day ahead.' },
-  { label: 'One Card', href: '/tarot/one-card/', core: false, symbol: '✦', tag: 'A quiet beginning', text: 'A single card for a new perspective on the moment.' },
-  { label: 'Three Card', href: '/tarot/three-card/', core: false, symbol: '✧', tag: 'A wider perspective', text: 'Past, present, and future in one wider view.' },
-  { label: 'Love', href: '/tarot/love/', core: false, symbol: '♡', tag: 'For matters of the heart', text: 'Two cards for your heart and the connection.' },
+  { label: 'Yes or No', href: '/yes-or-no/', symbol: '◐', tag: 'A little clarity', text: 'Ask a question. Draw one card.' },
+  { label: "Today's Fortune", href: '/today/', symbol: '☀', tag: 'A daily ritual', text: 'A card and a little guidance for the day ahead.' },
+] as const;
+
+/** The three evergreen how-to guides at /guides/. */
+export const guides = [
+  { slug: 'yes-no-tarot', href: '/guides/yes-no-tarot/', label: 'Yes or No Tarot Guide', text: 'How to ask a clear question and read a graded yes-or-no answer.' },
+  { slug: 'upright-vs-reversed', href: '/guides/upright-vs-reversed/', label: 'Upright vs Reversed', text: 'What a reversed card changes, and what it does not.' },
+  { slug: 'daily-tarot', href: '/guides/daily-tarot/', label: 'Daily Tarot Guide', text: 'How to use one card a day as a simple reflection habit.' },
 ] as const;
 
 export interface NavItem {

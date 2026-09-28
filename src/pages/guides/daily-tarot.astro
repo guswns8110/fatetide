@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
+import type { Crumb } from '../../config/site';
+import '../../styles/tarot.css';
+import '../../styles/zodiac.css';
+
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Guides', path: '/guides/' },
+  { name: 'Daily Tarot Guide', path: '/guides/daily-tarot/' },
+];
+---
+
+<BaseLayout title="How to Use a Daily Tarot Card" description="Ways to use one tarot card a day as a reflection habit: morning reading, evening review, journaling prompts, and why it helps to resist redrawing until you like the card." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <section class="one-card-intro container"><p class="eyebrow">Guide</p><h1>How to use a daily tarot card</h1><p class="lead">One card a day is a small habit, not a forecast. This guide covers a few ways to make that habit actually useful.</p><a href="/guides/" class="back-home">← All guides</a></section>
+
+  <article class="zodiac-article">
+    <section aria-labelledby="why-title">
+      <h2 id="why-title">Why Draw One Card a Day</h2>
+      <p>A single daily card works less like a prediction and more like a constraint: one image, a handful of short readings, and one day to notice where it applies. That constraint is useful precisely because it is small. It gives you one thing to hold onto rather than an open-ended reading to interpret from scratch.</p>
+    </section>
+
+    <section aria-labelledby="morning-title">
+      <h2 id="morning-title">Morning Reflection</h2>
+      <p>Reading the card first thing works well because you have not yet decided how the day is going to go. A simple approach is to read the general line and the one category (love, work, or money) that feels most relevant right now, and carry a single sentence from it, rather than trying to apply all five sections at once.</p>
+    </section>
+
+    <section aria-labelledby="evening-title">
+      <h2 id="evening-title">Evening Review</h2>
+      <p>Returning to the same card at the end of the day, without redrawing, gives it a second use: not "what does this predict," but "did anything in the day actually connect to this." That comparison is often more informative than the morning reading on its own, since it is grounded in what actually happened rather than what might.</p>
+    </section>
+
+    <section aria-labelledby="journal-title">
+      <h2 id="journal-title">Journaling With Your Card</h2>
+      <p>If you keep any kind of journal, the card's reflection line is a reasonable starting prompt: write for a few minutes on the question it raises, rather than on the card's meaning in the abstract. Over weeks, looking back at which cards came up and what you wrote can say more about recurring patterns in your own thinking than any single day's card does.</p>
+    </section>
+
+    <section aria-labelledby="redraw-title">
+      <h2 id="redraw-title">Avoiding the Redraw Habit</h2>
+      <p>It is tempting to reload the page hoping for a different card, but on FateTide the card for the day is fixed once drawn and saved to your device, on purpose. Sitting with a card that does not immediately feel relevant is often more useful than a card chosen to match a mood you already had; the mismatch itself can be worth noticing.</p>
+    </section>
+
+    <section aria-labelledby="question-title">
+      <h2 id="question-title">Carrying One Question Through the Day</h2>
+      <p>Rather than trying to remember the whole reading, pick one line, usually the advice or reflection line, and treat it as a question to keep loosely in mind. That single thread tends to be easier to actually use than five separate paragraphs read once and forgotten.</p>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div><h3>Is a daily card meant to predict my day?</h3><p>No. It is offered as a prompt for attention and reflection, not a forecast of what the day holds.</p></div>
+        <div><h3>What happens if I don't check it until evening?</h3><p>Nothing is lost; the same card is waiting, since it was already drawn and saved for the current local date.</p></div>
+        <div><h3>Should I read all five sections every day?</h3><p>Not necessarily. Reading the one or two sections that feel relevant is usually more useful than reading all five out of habit.</p></div>
+        <div><h3>Can I add my zodiac sign to the daily reading?</h3><p>Yes, on the <a href="/today/">Today's Fortune</a> page, choosing a sign adds a short horoscope line alongside the card.</p></div>
+      </div>
+    </section>
+
+    <p class="zodiac-disclaimer">Start today: <a href="/today/">reveal your daily card</a>. For entertainment and personal reflection.</p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/common/Breadcrumbs.astro';
+import type { Crumb } from '../../config/site';
+import '../../styles/tarot.css';
+import '../../styles/zodiac.css';
+
+const crumbs: Crumb[] = [
+  { name: 'Home', path: '/' },
+  { name: 'Guides', path: '/guides/' },
+  { name: 'Yes or No Tarot Guide', path: '/guides/yes-no-tarot/' },
+];
+---
+
+<BaseLayout title="A Practical Guide to Yes or No Tarot" description="How to write a clear yes-or-no question, read card orientation, handle an ambiguous answer, and avoid the most common mistakes in a yes-or-no tarot reading." breadcrumbs={crumbs}>
+  <Breadcrumbs items={crumbs} />
+  <section class="one-card-intro container"><p class="eyebrow">Guide</p><h1>A practical guide to yes or no tarot</h1><p class="lead">A yes-or-no reading is a small tool: one card, a graded answer, and a habit of asking questions that are actually worth asking. This guide covers how to use it well.</p><a href="/guides/" class="back-home">← All guides</a></section>
+
+  <article class="zodiac-article">
+    <section aria-labelledby="what-title">
+      <h2 id="what-title">What a Yes or No Reading Is</h2>
+      <p>A yes-or-no tarot reading takes one drawn card and reads its meaning against a simple question you are holding in mind. On FateTide, the answer is not a flat yes or no; it sits on a five-point scale, because a single card rarely settles a real question completely, and pretending otherwise makes the reading less useful, not more.</p>
+      <p>Treat it as a way to see your own question from a slightly different angle, using an image and a short piece of writing as the prompt, rather than as a tool that knows something you do not.</p>
+    </section>
+
+    <section aria-labelledby="write-title">
+      <h2 id="write-title">How to Write a Good Question</h2>
+      <p>A question about your own next move is easier to read honestly than a question aimed at controlling someone else or an outcome you cannot influence. It helps to rewrite a vague worry into something specific before you draw.</p>
+      <div class="guide-table-wrap">
+        <table class="guide-table">
+          <thead><tr><th>Vague</th><th>More specific</th></tr></thead>
+          <tbody>
+            <tr><td>"Will things work out?"</td><td>"Should I bring up this problem before it gets worse?"</td></tr>
+            <tr><td>"Does he like me?"</td><td>"Is it a good time for me to be honest about how I feel?"</td></tr>
+            <tr><td>"Will I get the job?"</td><td>"Should I follow up on this application now, or wait?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Notice the pattern: the specific version is about a choice that is actually yours to make.</p>
+    </section>
+
+    <section aria-labelledby="orientation-title">
+      <h2 id="orientation-title">Card Orientation and Your Answer</h2>
+      <p>About one draw in three lands reversed, and orientation shifts the tone of the answer rather than reversing it outright. A card whose upright meaning already leans supportive can still read as a likely yes when reversed, just with a softer or more internal shade to it. The <a href="/guides/upright-vs-reversed/">Upright vs Reversed guide</a> covers this on its own in more depth.</p>
+    </section>
+
+    <section aria-labelledby="ambiguous-title">
+      <h2 id="ambiguous-title">What to Do With an Ambiguous Card</h2>
+      <p>Some draws land on unclear, and that is a legitimate answer, not a failed reading. It usually means the situation genuinely has more than one side, or that you do not yet have enough information to act. The useful move at that point is not to redraw immediately, but to sit with the question a little longer, or to gather the missing piece before asking again.</p>
+    </section>
+
+    <section aria-labelledby="repeat-title">
+      <h2 id="repeat-title">Why Repeating a Question Doesn't Help</h2>
+      <p>Drawing the same question over and over does not make the answer more accurate; each draw is independent, so repeating it mostly gives you more chances to land on the answer you already wanted. If a first answer feels wrong, it is more honest to ask a different, more precise question than to keep pulling cards until one agrees with you.</p>
+    </section>
+
+    <section aria-labelledby="decisions-title">
+      <h2 id="decisions-title">Don't Let It Be Your Only Basis for a Decision</h2>
+      <p>A yes-or-no card is not medical, legal, or financial advice, and it should not be the deciding factor for choices in those areas. For anything with real consequences, use the reading as one small prompt among others, not a substitute for a professional who knows your actual situation. The <a href="/disclaimer/">disclaimer</a> covers this in full.</p>
+    </section>
+
+    <section aria-labelledby="examples-title">
+      <h2 id="examples-title">Worked Examples</h2>
+      <p><strong>Before:</strong> "Should I text them?" <strong>After:</strong> "Is now a reasonable time to reach out, or would it help to wait a day?" The second version gives the card, and you, something concrete to respond to.</p>
+      <p><strong>Before:</strong> "Is this the right career move?" <strong>After:</strong> "Would it help to talk this decision through with someone before committing?" This keeps the choice with you rather than outsourcing it to the card.</p>
+    </section>
+
+    <section aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div><h3>Do I need to say my question out loud?</h3><p>No. FateTide does not collect or store any question you ask; hold it in mind, shuffle, and choose a card.</p></div>
+        <div><h3>What if I get "unclear" twice in a row?</h3><p>That is a reasonable signal to wait, gather more information, or rethink the question rather than to keep drawing.</p></div>
+        <div><h3>Is a "no" answer final?</h3><p>No. It reflects the tone of one card at one moment, not a fixed outcome. It is worth reading as "reconsider" rather than "never."</p></div>
+        <div><h3>Can I use this for someone else's question?</h3><p>You can, but be cautious about treating the answer as a statement about another person's feelings or choices, which the card cannot actually know.</p></div>
+      </div>
+    </section>
+
+    <p class="zodiac-disclaimer">Try it yourself: <a href="/yes-or-no/">draw a card and ask your question</a>. For entertainment and personal reflection.</p>
+  </article>
+</BaseLayout>

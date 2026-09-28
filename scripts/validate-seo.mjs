@@ -16,8 +16,8 @@ function build(label, env) {
   const outDir = join(root, label);
   const { useFileEnv, ...vars } = env;
   const childEnv = { ...process.env, ...emptyEnv, ...vars };
-  // useFileEnv: let the AdSense values come from the committed .env.production, like a real production build.
-  if (useFileEnv) { delete childEnv.PUBLIC_ADSENSE_CLIENT; delete childEnv.PUBLIC_ADSENSE_ENABLED; }
+  // useFileEnv: let these values come from the committed .env.production, like a real production build.
+  if (useFileEnv) { delete childEnv.PUBLIC_ADSENSE_CLIENT; delete childEnv.PUBLIC_ADSENSE_ENABLED; delete childEnv.PUBLIC_CONTACT_EMAIL; }
   const result = spawnSync(process.execPath, [pnpm, 'exec', 'astro', 'build', '--outDir', outDir], { cwd: resolve('.'), encoding: 'utf8', env: childEnv });
   if (result.status !== 0) throw new Error(`build ${label} failed:\n${result.stdout}\n${result.stderr}`);
   return outDir;
@@ -55,15 +55,29 @@ function jpegSize(buffer) {
   return null;
 }
 
-// noindex: private share links, the 404, and the de-emphasized Tarot modes (still reachable, not promoted).
-const NOINDEX = new Set(['/404', '/tarot/shared/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/']);
-const HIDDEN_LINKS = ['/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/compatibility/'];
-const LEGACY_ROUTES = { '/tarot/yes-or-no/': '/yes-or-no/', '/tarot/daily/': '/today/' };
+// noindex: private share links, the 404, and Compatibility (selector-driven, little independent
+// static content; kept working and linked from zodiac guides, just not promoted in search).
+// One Card, Three Card, Love, and the Tarot hub were retired outright: public/_redirects sends
+// their old addresses to /yes-or-no/ or / with a 301, and no page is built at them any more.
+const NOINDEX = new Set(['/404', '/tarot/shared/', '/compatibility/']);
+const HIDDEN_LINKS = ['/compatibility/'];
+const LEGACY_ROUTES = {
+  '/tarot/yes-or-no/': '/yes-or-no/',
+  '/tarot/daily/': '/today/',
+  '/tarot/': '/',
+  '/tarot/one-card/': '/yes-or-no/',
+  '/tarot/three-card/': '/yes-or-no/',
+  '/tarot/love/': '/yes-or-no/',
+};
+const GUIDES = ['/guides/yes-no-tarot/', '/guides/upright-vs-reversed/', '/guides/daily-tarot/'];
 const EXPECTED = [
-  '/', '/yes-or-no/', '/today/', '/tarot/', '/tarot/one-card/', '/tarot/three-card/', '/tarot/love/', '/tarot/shared/',
-  '/horoscope/', '/compatibility/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/', '/404',
+  '/', '/yes-or-no/', '/today/', '/tarot/shared/', '/horoscope/', '/compatibility/',
+  '/guides/', ...GUIDES,
+  '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/', '/404',
   ...['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'].map((id) => `/zodiac/${id}/`),
 ];
+/** Pages expected to carry substantial, independently valuable editorial content (word-count and no-duplication checks). */
+const CONTENT_PAGES = ['/yes-or-no/', '/today/', ...GUIDES];
 const BREADCRUMB_PAGES = EXPECTED.filter((route) => route !== '/' && !NOINDEX.has(route));
 const FORBIDDEN_CONTENT = /coming soon|lorem ipsum|placeholder|\btodo\b|fixme|under construction|\btbd\b|\byou will\b|\byou'll\b|will meet|will fail|will marry|will get rich|destined|soulmate|guaranteed|testimonial/i;
 
@@ -155,6 +169,24 @@ try {
   }
   assert.ok(!/mailto:/.test([...site.values()].join('')), 'no contact address may appear unless configured');
 
+  // Editorial content: substantial on its own, and not copy-pasted between the new pages.
+  const articleBody = (html) => html.match(/<article class="zodiac-article[^"]*">([\s\S]*?)<\/article>/)?.[1] ?? '';
+  const seenParagraphs = new Map();
+  for (const route of CONTENT_PAGES) {
+    const body = articleBody(site.get(route));
+    const words = visibleText(body).split(/\s+/).filter(Boolean).length;
+    assert.ok(words >= 350, `${route}: only ${words} words of editorial content, expected substantially more than a thin tool page`);
+    assert.ok((body.match(/<h2/g) ?? []).length >= 3, `${route}: too few h2 sections for independent, skimmable content`);
+    const paragraphs = [...body.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map((m) => visibleText(m[1]).trim()).filter((p) => p.length > 50);
+    for (const paragraph of paragraphs) {
+      assert.ok(!seenParagraphs.has(paragraph) || seenParagraphs.get(paragraph) === route, `${route}: paragraph copied from ${seenParagraphs.get(paragraph)}: "${paragraph.slice(0, 60)}..."`);
+      seenParagraphs.set(paragraph, route);
+    }
+  }
+  const guidesIndexHtml = site.get('/guides/');
+  for (const guide of GUIDES) assert.ok(guidesIndexHtml.includes(`href="${guide}"`), `/guides/ must link to ${guide}`);
+  assert.equal((guidesIndexHtml.match(/class="guide-list"/g) ?? []).length, 1, '/guides/ needs a guide list');
+
   // Internal links all resolve to a built file.
   const exists = (path) => {
     const target = join(main, path.replace(/^\//, ''));
@@ -178,8 +210,10 @@ try {
     assert.ok(!/nav-toggle|nav-sub|has-children/.test(html), `${route}: no menu or dropdown markup`);
     const footer = html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? '';
     const footerLinks = [...footer.matchAll(/<a [^>]*?href="([^"]+)"/g)].map((m) => m[1]);
-    assert.deepEqual(footerLinks, ['/', '/yes-or-no/', '/today/', '/horoscope/', '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'], `${route}: footer links`);
-    assert.ok(!html.includes('href="/tarot/yes-or-no') && !html.includes('href="/tarot/daily'), `${route}: links to a redirected legacy route`);
+    assert.deepEqual(footerLinks, ['/', '/yes-or-no/', '/today/', '/horoscope/', ...GUIDES, '/about/', '/how-it-works/', '/privacy/', '/terms/', '/disclaimer/'], `${route}: footer links`);
+    for (const legacy of ['/tarot/yes-or-no', '/tarot/daily', '/tarot/one-card', '/tarot/three-card', '/tarot/love', 'href="/tarot/"']) {
+      assert.ok(!html.includes(legacy.startsWith('href') ? legacy : `href="${legacy}`), `${route}: links to a redirected legacy route (${legacy})`);
+    }
   }
   const home = site.get('/');
   const homeLinks = [...home.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
@@ -252,7 +286,8 @@ try {
   const fileEnv = Object.fromEntries(readFileSync(resolve('.env.production'), 'utf8').split(/\r?\n/).filter((line) => /^[A-Z_]+=/.test(line)).map((line) => line.split(/=(.*)/s).slice(0, 2)));
   assert.match(fileEnv.PUBLIC_ADSENSE_CLIENT, /^ca-pub-\d{10,20}$/, '.env.production needs a valid publisher ID');
   assert.equal(fileEnv.PUBLIC_ADSENSE_ENABLED, 'false', '.env.production must keep ads off until AdSense approves the site');
-  assert.deepEqual(Object.keys(fileEnv).sort(), ['PUBLIC_ADSENSE_CLIENT', 'PUBLIC_ADSENSE_ENABLED'], '.env.production may only hold these public values');
+  assert.deepEqual(Object.keys(fileEnv).sort(), ['PUBLIC_ADSENSE_CLIENT', 'PUBLIC_ADSENSE_ENABLED', 'PUBLIC_CONTACT_EMAIL'], '.env.production may only hold these public values');
+  assert.match(fileEnv.PUBLIC_CONTACT_EMAIL, /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/, '.env.production needs a well-formed contact address');
   const prod = pages(build('production-env', { PUBLIC_SITE_URL: ORIGIN, useFileEnv: true }));
   assert.equal(prod.size, EXPECTED.length);
   for (const [route, html] of prod) {
@@ -261,6 +296,7 @@ try {
     assert.ok(html.indexOf('google-adsense-account') < html.indexOf('</head>'), `${route}: tag belongs in <head>`);
     for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot', '<ins ']) assert.ok(!html.includes(needle), `${route}: ads must stay off (found ${needle})`);
     assert.equal(attr(html, /<link rel="canonical" href="([^"]*)"/) ?? '', NOINDEX.has(route) ? '' : `${ORIGIN}${route}`, `${route}: canonical unchanged by the verification tag`);
+    assert.ok(html.includes(`mailto:${fileEnv.PUBLIC_CONTACT_EMAIL}`), `${route}: contact address from .env.production`);
   }
   // ads.txt must name the same publisher as the verification tag.
   assert.equal(adsTxt.trim(), `google.com, pub-${fileEnv.PUBLIC_ADSENSE_CLIENT.replace('ca-pub-', '')}, DIRECT, f08c47fec0942fa0`, 'ads.txt publisher must match PUBLIC_ADSENSE_CLIENT');
