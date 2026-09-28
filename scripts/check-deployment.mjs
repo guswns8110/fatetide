@@ -203,13 +203,21 @@ await check('AdSense site-verification tag (if configured) is valid and in <head
   assert.ok(text.indexOf('google-adsense-account') < text.indexOf('</head>'), 'tag must be inside <head>');
   return id;
 });
-await check('contact address is published (or absent if not yet configured)', async () => {
-  const { text } = await fetchChain('/privacy/');
-  const mailto = text.match(/mailto:([^"]+)"/)?.[1];
-  if (!mailto) return 'no mailto (contact email not configured)';
-  assert.match(mailto, /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/, `malformed contact address ${mailto}`);
-  return `mailto:${mailto}`;
-});
+for (const path of ['/', '/about/']) {
+  await check(`contact address on ${path} (or absent if not yet configured)`, async () => {
+    const { text } = await fetchChain(path);
+    const mailto = text.match(/mailto:([^"]+)"/)?.[1];
+    if (mailto) {
+      assert.match(mailto, /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/, `malformed contact address ${mailto}`);
+      return `mailto:${mailto}`;
+    }
+    // Cloudflare's email obfuscation (Scrape Shield) can rewrite a plain mailto: link into
+    // /cdn-cgi/l/email-protection at the edge; it still resolves to a real mailto link for visitors
+    // (and for Googlebot, which runs JavaScript), just not as a literal "mailto:" string in the raw HTML.
+    if (text.includes('cdn-cgi/l/email-protection')) return 'obfuscated by Cloudflare email protection (resolves client-side)';
+    return 'no contact address (not configured)';
+  });
+}
 
 if (checkHeaders) {
   await check('security and cache headers', async () => {
