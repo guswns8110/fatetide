@@ -177,12 +177,24 @@ await check('og-default.jpg', async () => {
   assert.match(response.headers.get('content-type') ?? '', /image\/jpeg/);
 });
 
-// Ads are off.
-await check('AdSense is off', async () => {
+// Manual ad slots are off; the AdSense base script is a separate, looser switch (see below).
+await check('manual ad slots are off', async () => {
   for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/leo/', '/horoscope/', '/guides/yes-no-tarot/']) {
     const { text } = await fetchChain(path);
-    for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot']) assert.ok(!text.includes(needle), `${path} contains ${needle}`);
+    for (const needle of ['class="ad-slot', '<ins ']) assert.ok(!text.includes(needle), `${path} contains ${needle}`);
   }
+});
+await check('AdSense base script loads exactly once, from a valid client ID', async () => {
+  for (const path of ['/', '/yes-or-no/', '/today/', '/zodiac/leo/', '/horoscope/', '/guides/yes-no-tarot/']) {
+    const { text } = await fetchChain(path);
+    const client = meta(text, 'google-adsense-account');
+    const matches = [...text.matchAll(/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=([^"&]+)/g)];
+    if (!client) { assert.equal(matches.length, 0, `${path}: script present without a verification client`); continue; }
+    assert.equal(matches.length, 1, `${path}: expected exactly one base script, found ${matches.length}`);
+    assert.equal(matches[0][1], client, `${path}: script client ${matches[0][1]} does not match verification tag ${client}`);
+    assert.ok(text.indexOf('adsbygoogle.js') < text.indexOf('</head>'), `${path}: base script must be in <head>`);
+  }
+  return 'base script present and consistent with the verification tag (Google will not serve ads from it until the account is approved)';
 });
 await check('ads.txt is plain text with one valid line', async () => {
   const { response, text, finalUrl } = await fetchChain('/ads.txt');

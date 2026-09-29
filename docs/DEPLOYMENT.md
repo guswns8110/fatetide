@@ -51,10 +51,10 @@ Set these under Pages > Settings > Environment variables (Production). They are 
 |---|---|---|
 | `PUBLIC_SITE_URL` | The real origin, for example `https://<project>.pages.dev` or your own domain. | empty |
 | `PUBLIC_CONTACT_EMAIL` | A real, monitored address. Shown in the footer and at the end of the policy pages. Hidden when empty. | empty |
-| `PUBLIC_ADSENSE_CLIENT` | Publisher ID (`ca-pub-` plus digits). When valid it adds the `google-adsense-account` meta tag for site verification. It does not load any ad script by itself. | empty |
-| `PUBLIC_ADSENSE_ENABLED` | Must be exactly `true`, and needs a valid client ID, before the AdSense script and ad slots are rendered. | `false` |
+| `PUBLIC_ADSENSE_CLIENT` | Publisher ID (`ca-pub-` plus digits). When valid it adds the `google-adsense-account` site-verification meta tag **and** loads the AdSense base script (`adsbygoogle.js`) in every page's `<head>`, so Google's review can detect the AdSense code. Google does not serve ads from that script until the account is approved. | empty |
+| `PUBLIC_ADSENSE_ENABLED` | The stricter switch: must be exactly `true`, and still needs a valid client ID, before any **manual** ad slot (`AdSlot.astro`) is rendered. It has no effect on the base script above. | `false` |
 
-The site builds and runs with all four empty or unset. `.env.production` (committed, public values only) sets `PUBLIC_ADSENSE_CLIENT` to the publisher ID, so the AdSense site-verification meta tag is in every page's `<head>`, and keeps `PUBLIC_ADSENSE_ENABLED=false`, so no ad script or ad slot is rendered. Values set in the Cloudflare dashboard override that file. `pnpm run test:seo` fails if `.env.production` ever enables ads or holds anything else.
+The site builds and runs with all four empty or unset. `.env.production` (committed, public values only) sets `PUBLIC_ADSENSE_CLIENT` to the publisher ID, so the AdSense verification meta tag and base script are in every page's `<head>`, and keeps `PUBLIC_ADSENSE_ENABLED=false`, so no manual ad slot is rendered anywhere. Values set in the Cloudflare dashboard override that file. `pnpm run test:seo` fails if `.env.production` ever enables ads or holds anything else.
 
 ### Trailing slashes and redirects
 
@@ -85,8 +85,8 @@ Only the site owner can do these:
 - [ ] Publish the site and open every page on a phone.
 - [ ] Set a real contact address (`PUBLIC_CONTACT_EMAIL`). The policy pages are drafts written from how the site actually behaves; have them reviewed for your country and situation. They are not legal advice.
 - [ ] Prefer a domain you own, then redeploy with the new `PUBLIC_SITE_URL`.
-- [ ] Add the site in AdSense and verify ownership: set `PUBLIC_ADSENSE_CLIENT` (adds the verification meta tag) or paste the snippet Google gives you.
-- [ ] Keep `PUBLIC_ADSENSE_ENABLED` at `false` until AdSense approves the site. Approval is never guaranteed.
+- [ ] Add the site in AdSense and verify ownership: set `PUBLIC_ADSENSE_CLIENT` (adds the verification meta tag and the AdSense base script) or paste the snippet Google gives you.
+- [ ] Keep `PUBLIC_ADSENSE_ENABLED` at `false` until AdSense approves the site, so manual ad slots stay off. The base script loading is expected during review and does not itself serve ads on an unapproved account. Approval is never guaranteed.
 
 ### ads.txt
 

@@ -1,12 +1,17 @@
 /**
- * Advertising switch. Ads are OFF unless BOTH are true:
- *   PUBLIC_ADSENSE_ENABLED=true  and  PUBLIC_ADSENSE_CLIENT=ca-pub-<digits>
- * With anything else, no Google script is loaded and no ad markup is rendered.
+ * Advertising switch, split into two independent gates:
+ *   - `client`: a well-formed PUBLIC_ADSENSE_CLIENT (ca-pub-<digits>) alone. Used for the
+ *     site-verification meta tag and for loading the AdSense base script (BaseLayout.astro).
+ *     Google does not serve ads from that script until the AdSense account is approved, and its
+ *     review process commonly expects the base script to already be present on the site.
+ *   - `active`: requires BOTH PUBLIC_ADSENSE_ENABLED=true AND a valid client. This is the
+ *     stricter switch that gates manual ad slots (AdSlot.astro) — real ad units stay off until
+ *     this is explicitly turned on, independent of whether the base script is loaded.
  */
 export interface AdsConfig {
-  /** A well-formed publisher ID, whether or not ads are enabled (used for site verification). */
+  /** A well-formed publisher ID, whether or not ads are enabled (site verification + base script). */
   client: string;
-  /** True only when ads are explicitly enabled and the client ID is valid. */
+  /** True only when ads are explicitly enabled and the client ID is valid (gates manual ad slots). */
   active: boolean;
 }
 

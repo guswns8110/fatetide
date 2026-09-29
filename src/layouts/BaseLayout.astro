@@ -25,7 +25,12 @@ const { title, description, noindex, isHome, breadcrumbs } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <SEO title={title} description={description} noindex={noindex} isHome={isHome} breadcrumbs={breadcrumbs} />
     {ads.client && <meta name="google-adsense-account" content={ads.client} />}
-    {ads.active && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads.client}`} crossorigin="anonymous"></script>}
+    {/* The AdSense base script loads whenever a valid publisher ID is configured, independent of
+        PUBLIC_ADSENSE_ENABLED: Google does not serve ads from it until the account is approved,
+        and AdSense's own review commonly expects this code to be present on the site. Manual ad
+        slots (AdSlot.astro) are a separate, stricter switch: they still require `ads.active`
+        (PUBLIC_ADSENSE_ENABLED=true) and stay off here. */}
+    {ads.client && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads.client}`} crossorigin="anonymous"></script>}
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

@@ -269,23 +269,32 @@ try {
 
   // ---------------------------------------------------------------- ads enabled with a client ID and a contact address
   const adsBuild = pages(build('ads', { PUBLIC_SITE_URL: ORIGIN, PUBLIC_ADSENSE_ENABLED: 'true', PUBLIC_ADSENSE_CLIENT: 'ca-pub-1234567890123456', PUBLIC_CONTACT_EMAIL: 'hello@example.test' }));
+  const scriptSrc = (client) => `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
   for (const [route, html] of adsBuild) {
-    assert.ok(html.includes('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1234567890123456'), `${route}: ad script`);
+    assert.equal((html.match(/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/g) ?? []).length, 1, `${route}: base script must load exactly once`);
+    assert.ok(html.includes(scriptSrc('ca-pub-1234567890123456')), `${route}: ad script`);
     assert.equal(meta(html, 'google-adsense-account'), 'ca-pub-1234567890123456', route);
     assert.ok(!html.includes('class="ad-slot'), `${route}: an ad slot without an ad unit ID must render nothing`);
     assert.ok(html.includes('mailto:hello@example.test'), `${route}: contact address`);
   }
   assert.equal(readFileSync(join(root, 'ads', 'ads.txt'), 'utf8'), adsTxt);
+
+  // A valid client ID alone (PUBLIC_ADSENSE_ENABLED left off) still loads the base script and the
+  // verification tag, exactly once each, in <head> — but never a manual ad slot.
   const verifyOnly = pages(build('verify', { PUBLIC_ADSENSE_ENABLED: 'false', PUBLIC_ADSENSE_CLIENT: 'ca-pub-1234567890123456' }));
-  for (const html of verifyOnly.values()) {
-    assert.ok(!html.includes('googlesyndication') && !html.includes('adsbygoogle'), 'client ID alone must not load ads');
-    assert.ok(html.includes('name="google-adsense-account"'));
+  for (const [route, html] of verifyOnly) {
+    assert.equal((html.match(/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/g) ?? []).length, 1, `${route}: base script must load exactly once even with ads disabled`);
+    assert.ok(html.includes(scriptSrc('ca-pub-1234567890123456')), `${route}: base script`);
+    assert.equal((html.match(/<meta name="google-adsense-account"/g) ?? []).length, 1, `${route}: verification tag must appear exactly once`);
+    assert.ok(html.indexOf('adsbygoogle.js') < html.indexOf('</head>'), `${route}: base script belongs in <head>`);
+    for (const needle of ['class="ad-slot', '<ins ', 'ad-slot-dev']) assert.ok(!html.includes(needle), `${route}: manual ad slot must stay off while PUBLIC_ADSENSE_ENABLED=false (found ${needle})`);
   }
 
-  // The committed production values: the verification tag is present on every page, and ads stay off.
+  // The committed production values: verification tag and base script on every page, exactly
+  // once each, from a valid client ID alone — manual ad slots stay off (PUBLIC_ADSENSE_ENABLED=false).
   const fileEnv = Object.fromEntries(readFileSync(resolve('.env.production'), 'utf8').split(/\r?\n/).filter((line) => /^[A-Z_]+=/.test(line)).map((line) => line.split(/=(.*)/s).slice(0, 2)));
   assert.match(fileEnv.PUBLIC_ADSENSE_CLIENT, /^ca-pub-\d{10,20}$/, '.env.production needs a valid publisher ID');
-  assert.equal(fileEnv.PUBLIC_ADSENSE_ENABLED, 'false', '.env.production must keep ads off until AdSense approves the site');
+  assert.equal(fileEnv.PUBLIC_ADSENSE_ENABLED, 'false', '.env.production must keep manual ad slots off until AdSense approves the site');
   assert.deepEqual(Object.keys(fileEnv).sort(), ['PUBLIC_ADSENSE_CLIENT', 'PUBLIC_ADSENSE_ENABLED', 'PUBLIC_CONTACT_EMAIL'], '.env.production may only hold these public values');
   assert.match(fileEnv.PUBLIC_CONTACT_EMAIL, /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/, '.env.production needs a well-formed contact address');
   const prod = pages(build('production-env', { PUBLIC_SITE_URL: ORIGIN, useFileEnv: true }));
@@ -293,9 +302,12 @@ try {
   for (const [route, html] of prod) {
     assert.equal((html.match(/<meta name="google-adsense-account" content="([^"]+)"/g) ?? []).length, 1, `${route}: exactly one verification tag`);
     assert.equal(meta(html, 'google-adsense-account'), fileEnv.PUBLIC_ADSENSE_CLIENT, route);
-    assert.ok(html.indexOf('google-adsense-account') < html.indexOf('</head>'), `${route}: tag belongs in <head>`);
-    for (const needle of ['adsbygoogle', 'googlesyndication', 'class="ad-slot', '<ins ']) assert.ok(!html.includes(needle), `${route}: ads must stay off (found ${needle})`);
-    assert.equal(attr(html, /<link rel="canonical" href="([^"]*)"/) ?? '', NOINDEX.has(route) ? '' : `${ORIGIN}${route}`, `${route}: canonical unchanged by the verification tag`);
+    assert.ok(html.indexOf('google-adsense-account') < html.indexOf('</head>'), `${route}: verification tag belongs in <head>`);
+    assert.equal((html.match(/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/g) ?? []).length, 1, `${route}: base script must load exactly once`);
+    assert.ok(html.includes(scriptSrc(fileEnv.PUBLIC_ADSENSE_CLIENT)), `${route}: base script must use the .env.production client ID`);
+    assert.ok(html.indexOf('adsbygoogle.js') < html.indexOf('</head>'), `${route}: base script belongs in <head>`);
+    for (const needle of ['class="ad-slot', '<ins ', 'ad-slot-dev']) assert.ok(!html.includes(needle), `${route}: manual ad slot must stay off (found ${needle})`);
+    assert.equal(attr(html, /<link rel="canonical" href="([^"]*)"/) ?? '', NOINDEX.has(route) ? '' : `${ORIGIN}${route}`, `${route}: canonical unchanged by the AdSense tags`);
     assert.ok(html.includes(`mailto:${fileEnv.PUBLIC_CONTACT_EMAIL}`), `${route}: contact address from .env.production`);
   }
   // ads.txt must name the same publisher as the verification tag.
